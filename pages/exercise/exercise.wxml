@@ -1,0 +1,101 @@
+<!--pages/exercise/exercise.wxml-->
+<view class='exercise-container' wx:if="{{currentExerciseType==='随机练习'}}" bindtap="clearPopup">
+  <!-- 顶部切换答/背题模式按钮 -->
+  <view class='exercise-top'>
+    <view class='change-type'>
+      <view class="change-btn {{isExerciseMode===true?'active':''}}" bindtap="switchExerciseNav" data-select='{{isExerciseMode}}'>
+        答题模式</view>
+      <view class="change-btn {{isExerciseMode===false?'active':''}}" bindtap="switchRememberNav" data-select='{{isExerciseMode}}'>
+        背题模式</view>
+    </view>
+  </view>
+
+  <!-- 主体：答题模式/背题模式 -->
+  <!-- 答题模式 -->
+  
+  <view class='change-content'>
+    <swiper bindchange="changeSwiper" current="{{swiperCurrent}}" style="height:{{scrollHeight + 'px'}}">
+      <swiper-item wx:for="{{subject}}" wx:for-index="father_index" wx:for-item="subjectItem">
+        <!-- todo 这里的滚动高度设置有问题，需要重新设计滚动 -->
+        <scroll-view scroll-y="{{true}}" style="height:{{scrollHeight + 'px'}}">
+          <view class="main-content">
+            <!-- 题干 -->
+            <view class='question'>
+              <text class='question-type'>单选题</text>
+              <text class='question-description'>{{subjectItem.desc}}</text>
+              <image wx:if="{{subjectItem.imageUrl != null}}" src='{{subjectItem.imageUrl}}' style='height:100rpx;width:300rpx;'></image>
+            </view>
+            <!-- 答案选项 -->
+            <!--获得父元素索引-->
+            <view data-index='{{father_index}}' wx:for="{{subjectItem.answers}}" wx:for-item="answerItem" class='option'>
+              <view bindtap='confirmAnswer' data-select="{{index}}" data-index='{{father_index}}' class='option-btn'>
+                {{answerItem.order}}
+                <image src='/images/right.png' wx:if="{{(isExerciseMode && answerItem.showRight) || (!isExerciseMode && subjectItem.rightAnswerIndex === index)}}"></image>
+                <image src='/images/wrong.png' wx:if="{{(isExerciseMode && answerItem.showWrong)}}"></image>
+              </view>
+              <view class='option-detail'>{{answerItem.value}}</view>
+            </view>
+            <!-- 反馈 -->
+            <view class='feedback' data-index='{{father_index}}'>
+              <view class='detail' wx:if="{{!isExerciseMode||subjectItem.userSelectState.isAnswered&&!subjectItem.userSelectState.isRight}}">
+                <view class='analysis'>
+                  <view class="analysis-title">
+                    <view class="analysis-title-line"></view>
+                    <view class="analysis-title-text">
+                      解析
+                    </view>
+                  </view>
+                  <text>{{subjectItem.analysis}}</text>
+                </view>
+                <view class='analysis'>
+                  <view class="analysis-title">
+                    <view class="analysis-title-line"></view>
+                    <view class="analysis-title-text">
+                      笔记
+                    </view>
+                  </view>
+                  <text>{{subjectItem.analysis}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </swiper-item>
+    </swiper>
+  </view>
+  
+
+  <!-- 底部操作工具栏 -->
+  <view class="exercise-bottom">
+    <view class="bottom-bar">
+      <view class="icon-box" bindtap='clickCollect'>
+        <image src="{{isCollected?'/images/f_collect.png':'/images/collect.png'}}"></image>
+      </view>
+      <view class="icon-box" bindtap='clickDislike'>
+        <image src="{{isDislike?'/images/f_dislike.png':'/images/dislike.png'}}"></image>
+      </view>
+      <view class="icon-box" catchtap='clickNote'>
+        <image src='/images/note.png'></image>
+      </view>
+      <view class="icon-box" catchtap='clickSetting'>
+        <image src='/images/setting.png'></image>
+      </view>
+    </view>
+  </view>
+  <view class="note-box" wx:if="{{isShowNotePanel}}" catchtap='clickInPopupPanel'>
+    <view class="input-box">
+      <textarea placeholder='笔记内容'></textarea>
+    </view>
+    <view class="okBtn">
+      确定
+    </view>
+  </view>
+  <view class="setting-box" wx:if="{{isShowSettingPanel}}" catchtap='clickInPopupPanel'>
+    <checkbox-group bindchange="checkboxChange">
+      <label class="checkbox" wx:for="{{settingItems}}" wx:for-item="settingItem">
+        <checkbox value="{{settingItem.name}}" checked="{{settingItem.checked}}" />
+        {{settingItem.value}}
+      </label>
+    </checkbox-group>
+  </view>
+</view>

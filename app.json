@@ -1,0 +1,40 @@
+{
+  "pages": [
+    "pages/summary/summary",
+    "pages/exercise/exercise",
+    "pages/index/index",
+    "pages/library/library"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "Happy_Exam",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#dddddd",
+    "selectedColor": "#41C7DB",
+    "borderStyle": "white",
+    "backgroundColor": "#F0FFFF",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/homeSelected.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/library/library",
+        "iconPath": "images/library.png",
+        "selectedIconPath": "images/librarySelected.png",
+        "text": "题库"
+      },
+      {
+        "pagePath": "pages/summary/summary",
+        "iconPath": "images/summary.png",
+        "selectedIconPath": "images/summarySelected.png",
+        "text": "统计"
+      }
+    ]
+  }
+}

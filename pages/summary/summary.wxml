@@ -1,0 +1,87 @@
+<!--pages/summary/summary.wxml-->
+<view class='summary-container'>
+  <view class='summary-top'>
+    <view class="top-item {{statistics=='complete'?'active':''}}" bindtap='switchNav' data-current='complete'>进度</view>
+    <view class="top-item {{statistics=='progress'?'active':''}}" bindtap='switchNav' data-current='progress'>历程</view>
+    <view class="top-item {{statistics=='achieve'?'active':''}}" bindtap='switchNav' data-current='achieve'>成就</view>
+  </view>
+  <view class='summary-body'>
+    <view hidden="{{statistics!='complete'}}">
+      <view class='complete_box'>
+        <view class='lib-name'>语文</view>
+        <view class='lib-detail'>
+          <view class='detail-item special-one'>
+            <span class='type-name'>语法题:</span>
+            <view class='complete-bar'>
+              <view class='right-num'>50</view>
+              <view class='wrong-num'>20</view>
+              <view class='uncomplete-num'>30</view>
+            </view>
+            <span class='total-num'>100</span>
+          </view>
+          <view class='detail-item total-one'>
+            <span class='type-name'>总计:</span>
+            <view class='complete-bar'>
+              <view class='right-num'></view>
+              <view class='wrong-num'></view>
+              <view class='uncomplete-num'></view>
+            </view>
+            <span class='total-num'>500</span>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view hidden="{{statistics!='progress'}}">
+      <block>
+        <view class='progress-list'>
+          <view class='list-circle'></view>
+          <view class='list-content'>
+            <text class='content-time'>2019-3-5</text>
+            <view class='content-detail'>随机练习37道，做对22道，用时45分钟</view>
+          </view>
+        </view>
+        <view class='progress-list'>
+          <view class='list-circle'></view>
+          <view class='list-content'>
+            <text class='content-time'>2019-3-5</text>
+            <view class='content-detail'>随机练习37道，做对22道，用时45分钟</view>
+          </view>
+        </view>
+      </block>
+    </view>
+    <view hidden="{{statistics!='achieve'}}">
+      <view class='achieve-item'>
+        <text class='achieve-name'>7日奋战</text>
+        <view class='achieve-desc'>连续七天刷题10道以上，该项成就可无限叠加，达成一次积攒50学霸点</view>
+        <view class='achieve-result'>
+          <text>达成：</text>
+          <image src='http://wximg.youtasc.com/f_star.png'></image>
+        </view>
+      </view>
+      <!-- <view class='achieve-item'>
+        <text class='achieve-name'>百题斩</text>
+        <view class='achieve-desc'>正确回答100道题即可达成一次，200道题则达成2次，达成一次积攒100学霸点</view>
+        <view class='achieve-result'>
+          <text>达成：</text>
+          <image src='http://wximg.youtasc.com/f_star.png'></image>
+        </view>
+      </view>
+      <view class='achieve-item'>
+        <text class='achieve-name'>20连杀</text>
+        <view class='achieve-desc'>连续做对20题则达成一次，要求是从未做过的题目，改成就可无限叠加，达成一次积攒300学霸点</view>
+        <view class='achieve-result'>
+          <text>达成：</text>
+          <image src='http://wximg.youtasc.com/f_star.png'></image>
+        </view>
+      </view>
+      <view class='achieve-item'>
+        <text class='achieve-name'>百题斩</text>
+        <view class='achieve-desc'>正确回答100道题即可达成一次，200道题则达成2次，达成一次积攒100学霸点</view>
+        <view class='achieve-result'>
+          <text>达成：</text>
+          <image src='http://wximg.youtasc.com/f_star.png'></image>
+        </view>
+      </view> -->
+    </view>
+  </view>
+</view>

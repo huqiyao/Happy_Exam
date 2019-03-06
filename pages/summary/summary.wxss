@@ -1,0 +1,163 @@
+/* pages/summary/summary.wxss */
+.summary-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.summary-top {
+  /* position: fixed; */
+  margin: auto;
+  width: 90%;
+  background-color: #f0f0f0;
+  height: 80rpx;
+  display: flex;
+  line-height: 80rpx;
+  justify-content: space-between;
+  /* flex-direction: row; */
+}
+
+.top-item {
+  background-color: white;
+  width: 33%;
+  text-align: center;
+  border-bottom: 3px solid #f0f0f0;
+}
+
+.active {
+  border-bottom: 3px solid #41c7db;
+}
+
+/* 主体的内容 */
+
+.summary-body {
+  margin: auto;
+  margin-top: 40rpx;
+  width: 90%;
+  /* background-color: pink; */
+}
+
+/*进度中每个题库的信息*/
+
+.complete_box {
+  margin: auto;
+  border: 1px solid gray;
+}
+
+.lib-name {
+  border-bottom: 1px solid gray;
+  padding: 15rpx;
+}
+
+.lib-detail {
+  padding: 15rpx;
+  font-size: 35rpx;
+}
+
+.detail-item {
+  border: 1px solid white;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15rpx;
+  margin-top: 5px;
+  height: 55rpx;
+  line-height: 55rpx;
+}
+
+.type-name {
+  display: inline-block;
+  width: 120rpx;
+  /* background-color: yellow; */
+}
+
+.complete-bar {
+  width: 400rpx;
+  height: 55rpx;
+  border: 1px solid gray;
+  display: flex;
+}
+
+.complete-bar>view {
+  display: inline-block;
+  text-align: center;
+}
+
+.right-num {
+  background-color: #0c3;
+  width: 50%;
+}
+
+.wrong-num {
+  background-color: #f63;
+  width: 20%;
+}
+
+.uncomplete-num {
+  width: 30%;
+}
+
+.total-num {
+  display: inline-block;
+  width: 80rpx;
+  height: auto;
+}
+
+/* 进程 */
+
+.progress-list {
+  margin: 5rpx 2rpx 5rpx 2rpx;
+  border-left: 2px solid #ddd;
+  position: relative;
+}
+
+.list-content {
+  margin-left: 15rpx;
+  margin-top: -5rpx;
+  padding-bottom: 40rpx;
+}
+
+.list-circle {
+  border: 1rpx solid #41c7db;
+  border-radius: 15rpx;
+  width: 25rpx;
+  height: 25rpx;
+  position: absolute;
+  left: -12.5rpx;
+  top: 10rpx;
+  /* z-index: 100; */
+  background-color: #fff;
+}
+.content-time{
+  font-size: 35.5rpx;
+}
+.content-detail{
+  font-size: 35rpx;
+  color: gray;
+  margin-top: 10rpx;
+}
+
+/* 成就 */
+.achieve-item{
+  border: 1px solid black;
+  padding: 15rpx;
+  margin-bottom: 20rpx;
+}
+.achieve-name{
+  display: inline-block;
+  margin-bottom: 20rpx;
+}
+.achieve-desc{
+  font-size:35rpx;
+  color: gray;
+  margin-bottom: 20rpx;
+}
+.achieve-result{
+  display: flex;
+  align-items: center;
+}
+.achieve-result text{
+  font-size: 36rpx;
+}
+.achieve-result image{
+  height: 40rpx;
+  width: 40rpx;
+}

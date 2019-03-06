@@ -1,0 +1,342 @@
+/* pages/exercise/exercise.wxss */
+
+/* 全局样式 */
+
+.exercise-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: lightcyan;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部切换模式按钮 */
+
+.exercise-top {
+  background-color: pink;
+  width: 100%;
+  height: 40px;
+  padding: 20rpx;
+}
+
+.exercise-bottom {
+  background-color: pink;
+  width: 100%;
+  height: 60px;
+}
+
+.change-content {
+  background-color: yellowgreen;
+  flex-grow: 1;
+}
+
+.change-type {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: white;
+  width: 75%;
+  margin: auto;
+  border-radius: 50rpx;
+}
+
+.change-type view {
+  position: relative;
+  font: bolder;
+  font-size: 12px;
+  text-align: center;
+  padding: 25rpx 14rpx;
+  width: 50%;
+  /* -webkit-tap-highlight-color:transparent; */
+}
+
+.change-type :nth-child(1) {
+  border-bottom-left-radius: 60rpx;
+  border-top-left-radius: 60rpx;
+}
+
+.change-type :nth-child(2) {
+  border-bottom-right-radius: 60rpx;
+  border-top-right-radius: 60rpx;
+}
+
+/* 选中的按钮样式 */
+
+.active {
+  color: white;
+  background-color: lightskyblue;
+}
+
+/* 主体部分 */
+
+/* 题干 */
+
+swiper {
+  height: 100%;
+}
+
+swiper-item {
+  background-color: blanchedalmond;
+}
+
+.main-content {
+  padding: 25rpx;
+}
+
+.question {
+  margin-top: 15rpx;
+}
+
+.question-type {
+  background-color:white;
+  border: 2rpx solid black;
+  margin-right: 10rpx;
+  padding: 2rpx;
+}
+
+.question image {
+  display: block;
+}
+
+/* 答案选项 */
+
+/* 按钮 */
+/* 背题模式下的正确答案 */
+.true{
+  background-color: green
+}
+.option {
+  height: 55rpx;
+  background-color: pink;
+  margin-top: 10rpx;
+}
+
+.option-btn {
+  display: inline-block;
+  background-color: white;
+  border: 1px solid gray;
+  border-radius: 50%;
+  margin-left: 10rpx;
+  margin-right: 10rpx;
+  height: 40rpx;
+  width: 40rpx;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 40rpx;
+  font-size: small;
+  position: relative;
+}
+
+.option-btn image {
+  position: absolute;
+  height: 30rpx;
+  width: 30rpx;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  /* opacity: 0.5; */
+}
+
+.user-answer-right {
+  background-color: green;
+}
+
+.user-answer-wrong {
+  background-color: red;
+}
+
+.option-detail {
+  display: inline-block;
+}
+
+/* 回答结果 */
+
+.result {
+  margin-top: 20rpx;
+  background-color: white;
+  padding-left: 20rpx;
+  /* border-bottom: 1px solid black; */
+}
+
+/* 反馈 */
+
+.feedback {
+  margin-top: 20rpx;
+  background-color: white;
+  box-shadow: 10rpx -5rpx 3rpx lightgray;
+  width: 99%;
+  /* padding: 20rpx; */
+}
+
+.detail {
+
+}
+
+.analysis {
+  padding: 40rpx;
+}
+
+.analysis-title {
+  position: relative;
+  height: 100rpx;
+}
+
+.analysis-title-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2rpx;
+  margin: auto;
+  background-color: black;
+  z-index: 0;
+}
+
+.analysis-title-text {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60rpx;
+  width: 120rpx;
+  margin: auto;
+  line-height: 60rpx;
+  text-align: center;
+
+  border: 3rpx solid black;
+  border-radius: 10rpx;
+  background-color: white;
+}
+
+/* 评价 */
+
+.pingjia {
+  /* background-color: paleturquoise; */
+  vertical-align: middle;
+  height: 100rpx;
+  position: relative;
+}
+
+.mark {
+  display: inline-block;
+  /* background-color: greenyellow; */
+  line-height: 100rpx;
+}
+
+.mark image {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: 15rpx;
+}
+
+.collection {
+  display: inline-block;
+  /* background-color: pink; */
+  position: absolute;
+  right: 0;
+  top: 20rpx;
+}
+
+.collection image {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.rightAnswr{
+  margin-bottom: 20rpx;
+}
+
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 600rpx;
+  height: 50px;
+  margin: auto;
+  border: 3rpx solid gray;
+  border-radius: 20rpx;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.icon-box {
+  width: 80rpx;
+  height: 80rpx;
+  position: relative;
+}
+
+.icon-box image {
+  width: 60rpx;
+  height: 60rpx;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.note-box {
+  position: absolute;
+  bottom: 120rpx;
+  height: 100rpx;
+  left: 25rpx;
+  right: 25rpx;
+  background-color: #cccccc;
+  border: 3rpx solid black;
+  border-radius: 16rpx;
+  padding: 25rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input-box {
+  height: 70rpx;
+  width: 500rpx;
+  border: 3rpx solid black;
+  background-color: white;
+}
+
+.input-box textarea {
+  width: 480rpx;
+  height: 70rpx;
+  padding: 10rpx;
+  box-sizing: border-box;
+}
+
+.okBtn {
+  width: 100rpx;
+  height: 50rpx;
+  border: 3rpx solid black;
+  border-radius: 12rpx;
+  background-color: white;
+  line-height: 50rpx;
+  text-align: center;
+}
+
+.setting-box {
+  position: absolute;
+  bottom: 120rpx;
+  height: 150rpx;
+  left: 25rpx;
+  right: 25rpx;
+  background-color: #cccccc;
+  border: 3rpx solid black;
+  border-radius: 16rpx;
+  padding: 25rpx;
+}
+
+.checkbox {
+  display: flex;
+  height: 70rpx;
+  line-height: 70rpx;
+}
+

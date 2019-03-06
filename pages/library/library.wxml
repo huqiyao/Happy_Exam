@@ -1,0 +1,7 @@
+<view class='home-container'>
+  <button bindtap="loadFile">从本地读取文件（json）</button>
+  <span>读取结果：</span>
+  <view class='load-result-box'>
+    <span>{{loadResult}}</span>
+  </view>
+</view>

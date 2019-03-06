@@ -1,0 +1,15 @@
+/* 全局container样式 */
+
+.home-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: lightcyan;
+  z-index: -10;
+  overflow: hidden;
+}
+
+.load-result-box {
+  background-color: white;
+  padding: 20rpx;
+}

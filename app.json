@@ -1,8 +1,8 @@
 {
   "pages": [
+    "pages/index/index",
     "pages/summary/summary",
     "pages/exercise/exercise",
-    "pages/index/index",
     "pages/library/library"
   ],
   "window": {

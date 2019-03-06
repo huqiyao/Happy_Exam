@@ -12,7 +12,7 @@
 
   <!-- 主体：答题模式/背题模式 -->
   <!-- 答题模式 -->
-  
+
   <view class='change-content'>
     <swiper bindchange="changeSwiper" current="{{swiperCurrent}}" style="height:{{scrollHeight + 'px'}}">
       <swiper-item wx:for="{{subject}}" wx:for-index="father_index" wx:for-item="subjectItem">
@@ -63,7 +63,7 @@
       </swiper-item>
     </swiper>
   </view>
-  
+
 
   <!-- 底部操作工具栏 -->
   <view class="exercise-bottom">
@@ -93,9 +93,20 @@
   <view class="setting-box" wx:if="{{isShowSettingPanel}}" catchtap='clickInPopupPanel'>
     <checkbox-group bindchange="checkboxChange">
       <label class="checkbox" wx:for="{{settingItems}}" wx:for-item="settingItem">
-        <checkbox value="{{settingItem.name}}" checked="{{settingItem.checked}}" />
-        {{settingItem.value}}
+        <checkbox value="{{settingItem.name}}" checked="{{settingItem.checked}}" /> {{settingItem.value}}
       </label>
     </checkbox-group>
+  </view>
+
+
+
+  <!-- 成就弹出框 -->
+  <view class='reward-box' hidden='true'>
+    <image src='../../images/reward.jpg'></image>
+    <view class='reward-content'>恭喜达成百题斩成就，获得100学霸点</view>
+    <view class='reward-btn'>
+      <view>去炫耀</view>
+      <view>关闭</view>
+    </view>
   </view>
 </view>

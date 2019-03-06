@@ -340,3 +340,33 @@ swiper-item {
   line-height: 70rpx;
 }
 
+/* 成就弹出框 */
+.reward-box{
+  height: 550rpx;
+  width:88%;
+  position: absolute;
+  z-index: 100;
+  background-color:white;
+  left: 6%;
+  top: 400rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+.reward-box image{
+  height: 200rpx;
+  width: 200rpx;
+}
+.reward-btn{
+  width: 450rpx;
+  display: flex;
+  justify-content: space-between;
+}
+.reward-btn view{
+  border: 2px solid black;
+  padding: 20rpx;
+  width: 150rpx;
+  text-align: center;
+  border-radius: 30rpx;
+}

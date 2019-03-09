@@ -10,29 +10,56 @@
 }
 
 /* home-top */
+
 .home-top {
   width: 100%;
   /* background-color: pink; */
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 /* 刷题进度球 */
 
 .progress-circle {
-  background-color:yellowgreen;
   width: 35%;
+  text-align: center;
 }
+
+.circle {
+  display: inline-block;
+  right: 30rpx;
+  z-index: 1000;
+  position: absolute;
+  top: 20rpx;
+}
+
+.circle-back{
+  position: absolute;
+  top: 20rpx;
+  right: 30rpx;
+}
+
 
 /* 下拉框样式 */
 
 .select-box {
   text-align: left;
   background: #fff;
-  width: 55%;
-  margin: 100rpx 0rpx 40px 15px;
+  width: 40%;
+  margin: 100rpx 0rpx 80rpx -35rpx;
   position: relative;
+}
+
+.tiku {
+  /* background-color: white; */
+  width: 104rpx;
+  height: 70rpx;
+  margin-top: 100rpx;
+  line-height: 70rpx;
+  vertical-align: middle;
+  font-size: 35rpx;
+  margin-left: 35rpx;
 }
 
 .select {
@@ -49,6 +76,9 @@
 .select-text {
   font-size: 30rpx;
   flex: 1;
+  /* background-color: red; */
+  display: inline-block;
+  width: 100%;
 }
 
 .select-img {
@@ -56,6 +86,8 @@
   height: 40rpx;
   display: block;
   transition: transform 0.3s;
+  position: absolute;
+  right: 10rpx;
 }
 
 .select-img-rotate {
@@ -87,40 +119,31 @@
 
 .home-middle {
   width: 100%;
-  /* background-color: yellow; */
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 50rpx;
   position: absolute;
   z-index: -1;
-  /* background: radial-gradient(#bbded6,#ffb6b9, #fae3d9); */
 }
 
 .choice-item {
-  width: 48%;
-  height: 340rpx;
+  width: 45%;
+  height: 325rpx;
   border: 2rpx solid gray;
   align-items: center;
   text-align: center;
   justify-content: center;
   line-height: 350rpx;
 }
-/* .choice-item:nth-child(1){
-  background-color: #ffb6b9;
-}
-.choice-item:nth-child(2){
-  background-color: #bbded6;
-}
-.choice-item:nth-child(3){
-  background-color: #fae3d9;
-}
-.choice-item:nth-child(4){
-  background-color: #61c0bf;
-} */
-.item-center{
-  margin-top: -510rpx;
-  z-index: 1px;
-  background-color: pink;
-  border-radius: 50%;
+
+/* 底部学霸点 */
+
+.genius-score {
+  position: absolute;
+  bottom: 25rpx;
+  width: 70%;
+  text-align: center;
+  left: 15%;
+  color: darkgray;
 }

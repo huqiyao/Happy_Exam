@@ -99,6 +99,26 @@ swiper-item {
   display: block;
 }
 
+.question-images {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+}
+
+.question-image-box {
+  height: 150rpx;
+  width: 150rpx;
+  border: 2rpx solid grey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10rpx;
+}
+
+.question-image-box image {
+  width: 100%;
+}
+
 /* 答案选项 */
 
 /* 按钮 */

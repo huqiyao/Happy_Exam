@@ -117,6 +117,8 @@ Page({
 
     swiperCurrent: 0,
     scrollHeight: 0,
+
+    images: [],
   },
 
   checkboxChange(e) {
@@ -303,6 +305,39 @@ Page({
       isExerciseMode: false
     })
   },
+  imageLoad: function (e) {
+    var width = e.detail.width;    //获取图片真实宽度
+    var height = e.detail.height;
+    var viewHeight, viewWidth;
+    if (width >= height) {
+      viewWidth = 150;
+      viewHeight = 150 * height / width;
+    } else {
+      viewWidth = 150 * width / height;
+      viewHeight = 150;
+    }
+    
+    var image = this.data.images;
+    //将图片的datadata-index作为image对象的key,然后存储图片的宽高值
+    image[e.target.dataset.index] = {
+      width: viewWidth,
+      height: viewHeight
+    }
+    this.setData({
+      images: image
+    })
+  },
+
+  previewImage: function (event) {
+    var index = event.currentTarget.dataset.index;//获取data-src
+    var imgList = event.currentTarget.dataset.list;//获取data-list
+    //图片预览
+    wx.previewImage({
+      current: imgList[index], // 当前显示图片的http链接
+      urls: imgList // 需要预览的图片http链接列表
+    })
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
@@ -333,6 +368,7 @@ Page({
     const currentLibrary = globalData.librarys.find(item => item.id === globalData.currentLibraryId);
     console.log(currentLibrary)
     if (currentLibrary) {
+      console.log(currentLibrary.subjects)
       this.setData({
         subject: currentLibrary.subjects.map(item => ({
           ...item,

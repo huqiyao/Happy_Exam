@@ -16,14 +16,18 @@
   <view class='change-content'>
     <swiper bindchange="changeSwiper" current="{{swiperCurrent}}" style="height:{{scrollHeight + 'px'}}">
       <swiper-item wx:for="{{subject}}" wx:for-index="father_index" wx:for-item="subjectItem">
-        <!-- todo 这里的滚动高度设置有问题，需要重新设计滚动 -->
         <scroll-view scroll-y="{{true}}" style="height:{{scrollHeight + 'px'}}">
           <view class="main-content">
             <!-- 题干 -->
             <view class='question'>
               <text class='question-type'>单选题</text>
               <text class='question-description'>{{subjectItem.desc}}</text>
-              <image wx:if="{{subjectItem.imageUrl != null}}" src='{{subjectItem.imageUrl}}' style='height:100rpx;width:300rpx;'></image>
+              <view class="question-images">
+                <view wx:for="{{subjectItem.images}}" wx:for-item="imageURL" class="question-image-box">
+                  <!-- <image wx:if="{{imageItem.base64 != null}}" src='{{imageItem.base64}}'></image> -->
+                  <image src="{{ imageURL }}" bindtap="previewImage" bindload="imageLoad" data-index="{{ index }}" data-list="{{subjectItem.images}}" style="width:{{ images[index].width }}rpx; height:{{ images[index].height }}rpx;"></image>
+                </view>
+              </view>
             </view>
             <!-- 答案选项 -->
             <!--获得父元素索引-->

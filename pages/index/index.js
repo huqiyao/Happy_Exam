@@ -10,7 +10,8 @@ Page({
     exerciseType: ["随机练习", "专项练习", "我的收藏", "我的错题"],
     show: false, //控制下拉列表的显示隐藏，false隐藏、true显示
     selectData: ['语文', '数学', '英语', '科学', '思品', '化学', '生物'], //下拉列表的数据
-    index: 0 //选择的下拉列表下标
+    index: 0 ,//选择的下拉列表下标
+    collectedSubjectIds:globalData.collectedSubjectIds
   },
   /**
    * 进度条

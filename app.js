@@ -9,6 +9,6 @@ App({
     currentLibraryId: '1',                      // 当前选中的题库
     currentExerciseType:'',//练习的类型
     wrongSubjectIds: [],                   // 答错的题目
-    collectedSubjectIds: [],               // 收藏的题目
+    collectedSubjectIds: (wx.getStorageSync('librarys') || [])[0].collections ,               // 收藏的题目
   }
 })

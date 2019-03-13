@@ -51,7 +51,7 @@ Page({
     // var that = this
     var collection;
     var subjectIndex = e.currentTarget.dataset.index
-    var subjectId = this.data.subject[subjectIndex].id
+    var subjectSelected = this.data.subject[subjectIndex]
     // this.setData
     if (this.data.subject[subjectIndex].isCollected === undefined) {
       var isCollected = "subject[" + subjectIndex + "].isCollected"
@@ -68,32 +68,33 @@ Page({
     }
     // 收藏
     if (this.data.subject[subjectIndex].isCollected === false) {
-      collection.push(subjectId)
-      lib[libIndex].collections = collection
       lib[libIndex].subjects[subjectIndex].isCollected = true
-      wx.setStorageSync('librarys', lib);
       var isCollected = "subject[" + subjectIndex + "].isCollected"
       this.setData({
-        [isCollected]: lib[libIndex].subjects[subjectIndex].isCollected
+        [isCollected]: true
       })
+      collection.push(subjectSelected)
+      lib[libIndex].collections = collection
+      wx.setStorageSync('librarys', lib);
+      
     }
     // 取消收藏
     else {
       var collectionDel = []
       for (var i = 0; i < collection.length; i++) {
-        if (collection[i] != subjectId) {
+        if (collection[i] != subjectSelected) {
           collectionDel.push(collection[i])
         }
-        lib[libIndex].collections = collectionDel
         lib[libIndex].subjects[subjectIndex].isCollected = false
+        lib[libIndex].collections = collectionDel
         wx.setStorageSync('librarys', lib);
         var isCollected = "subject[" + subjectIndex + "].isCollected"
         this.setData({
-          [isCollected]: lib[libIndex].subjects[subjectIndex].isCollected
+          [isCollected]:false
         })
       }
     }
-    globalData.collectedSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
+    // globalData.collectedSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
   },
 
   clickDislike: function(e) {
@@ -143,7 +144,7 @@ Page({
     var wrongSubject
     var libIndex = this.data.currentLibraryId - 1
     var subjectIndex = e.target.dataset.index
-    var subjectId = this.data.subject[subjectIndex].id
+    var subjectSelected = this.data.subject[subjectIndex]
     var result = this.data.subject[subjectIndex].rightAnswerIndex
     var choise = e.target.dataset.select
     var userSelectState = "subject[" + subjectIndex + "].userSelectState"; //先用一个变量，把(subject[itemIndex]. userSelectState)用字符串拼接起来,//第一次出错是因为字符串中无端出现空格
@@ -164,10 +165,10 @@ Page({
     if (resultObject.isAnswered === true && lib[libIndex].subjects[subjectIndex].userSelectState === undefined && this.data.isExerciseMode) {
       // 回答错误
       if (resultObject.isRight === false) {
-        wrongSubject.push(subjectId)
+        wrongSubject.push(subjectSelected)
         lib[libIndex].wrongSubjects = wrongSubject
       }
-      answeredSubject.push(subjectId)
+      answeredSubject.push(subjectSelected)
       lib[libIndex].answeredSubjects = answeredSubject
       lib[libIndex].subjects[subjectIndex].userSelectState = resultObject
       wx.setStorageSync('librarys', lib);
@@ -323,10 +324,27 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
+    
     var that = this;
     that.setData({
-      currentLibraryId: options.currentLibraryId
+      currentLibraryId: options.currentLibraryId,
+      libraryItem: options.libraryItemType,
+      
     })
+    // this.setData({
+    //   libraryItem: options.libraryItemType,
+    //   // subject: currentLibrary.subjects.map(item => ({
+    //   //   ...item,
+    //   //   // userSelectState: {
+    //   //   //   isAnswered: false,
+    //   //   //   // isRight: false,
+    //   //   //   // userOption: 'B'
+    //   //   // },
+    //   //   // isCollected: false,
+    //   //   // star: stars
+    //   // }))
+    // })
+    // console.log(this.data.libraryItem)
   },
 
   /**
@@ -345,18 +363,33 @@ Page({
     console.log(currentLibrary)
     if (currentLibrary) {
       console.log(currentLibrary.subjects)
-      this.setData({
-        subject: currentLibrary.subjects.map(item => ({
+      // console.log(options.libraryItemType)
+      if(this.data.libraryItem === "随机"){
+        this.setData({
+          subject: currentLibrary.subjects.map(item => ({
           ...item,
-          // userSelectState: {
-          //   isAnswered: false,
-          //   // isRight: false,
-          //   // userOption: 'B'
-          // },
-          // isCollected: false,
-          // star: stars
+        //       userSelectState: {
+        //   isAnswered: false,
+        // },
+        // isCollected: false,
+        // star: stars
         }))
-      })
+        })
+      }
+      if (this.data.libraryItem === "收藏") {
+        this.setData({
+          subject: currentLibrary.collections.map(item => ({
+            ...item
+          }))
+        })
+      }
+      if (this.data.libraryItem === "错题") {
+        this.setData({
+          subject: currentLibrary.wrongSubjects.map(item => ({
+            ...item
+          }))
+        })
+      }
     }
     var that = this;
     var obj = wx.createSelectorQuery();

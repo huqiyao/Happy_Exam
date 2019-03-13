@@ -25,10 +25,10 @@
       <text>专项练习</text>
     </view>
     <view class='choice-item' bindtap='toExercise' data-type='{{exerciseType[2]}}'>
-      <text>我的收藏({{collectedSubjectIds.length}})</text>
+      <text>我的收藏({{collectedSubjects.length}})</text>
     </view>
     <view class='choice-item' bindtap='toExercise' data-type='{{exerciseType[3]}}'>
-      <text>我的错题({{wrongSubjectIds.length}})</text>
+      <text>我的错题({{wrongSubjects.length}})</text>
     </view>
   </view>
   <view class='genius-score'>学霸点：700（准学霸）</view>

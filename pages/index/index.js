@@ -66,8 +66,8 @@ Page({
     this.setData({
       index: Index,
       show: !this.data.show,
-      collectedSubjectIds: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections),
-      wrongSubjectIds: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects)
+      collectedSubjects: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections),
+      wrongSubjects: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects)
     });
   },
   /**
@@ -76,9 +76,20 @@ Page({
   toExercise: function(e) {
     // globalData.currentExerciseType = e.currentTarget.dataset.type
     var type = e.currentTarget.dataset.type
+    var libraryItemType
+    if (type === "随机练习") {
+      libraryItemType = "随机"
+    }
+    if (type === "我的收藏") {
+      libraryItemType = "收藏"
+    }
+    if (type === "我的错题") {
+      libraryItemType = "错题"
+    }
+    console.log(libraryItemType)
     wx.navigateTo({
       // url: '/pages/exercise/exercise?currentExerciseType=' + type,
-      url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId,
+      url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + libraryItemType,
       // success: function (e) {  //切换过去要刷新
       //   var page = getCurrentPages().pop();
       //   if (page == undefined || page == null) {
@@ -106,11 +117,11 @@ Page({
     });
   },
   onShow: function(options) {
-    this.optionTap
+    // this.optionTap
     this.setData({
       // collectedSubjectIds: globalData.collectedSubjectIds
-      collectedSubjectIds: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections),
-      wrongSubjectIds: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects)
+      collectedSubjects: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections),
+      wrongSubjects: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects)
 
 
     })

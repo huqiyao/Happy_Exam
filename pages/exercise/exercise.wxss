@@ -127,18 +127,18 @@ swiper-item {
   background-color: green
 }
 .option {
-  height: 55rpx;
+  /* height: 55rpx; */
   background-color: pink;
   margin-top: 10rpx;
 }
 
 .option-btn {
-  display: inline-block;
+  /* display: inline-block; */
+  float: left;
   background-color: white;
   border: 1px solid gray;
   border-radius: 50%;
-  margin-left: 10rpx;
-  margin-right: 10rpx;
+  margin:  4rpx 10rpx;
   height: 40rpx;
   width: 40rpx;
   text-align: center;
@@ -169,7 +169,7 @@ swiper-item {
 }
 
 .option-detail {
-  display: inline-block;
+  margin-left: 60rpx;
 }
 
 /* 回答结果 */

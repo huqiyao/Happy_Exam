@@ -107,12 +107,12 @@
 
 
   <!-- 成就弹出框 -->
-  <view class='reward-box' hidden='true'>
+  <!-- <view class='reward-box' hidden='true'>
     <image src='../../images/reward.jpg'></image>
     <view class='reward-content'>恭喜达成百题斩成就，获得100学霸点</view>
     <view class='reward-btn'>
       <view>去炫耀</view>
       <view>关闭</view>
     </view>
-  </view>
+  </view> -->
 </view>

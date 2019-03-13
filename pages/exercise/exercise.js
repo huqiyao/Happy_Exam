@@ -1,39 +1,12 @@
 var app = getApp();
 var globalData = app.globalData;
 var util
-var libIndex = 0
+// var libIndex = 0
 // var lib = wx.getStorageSync('librarys') || []
 var lib = globalData.librarys
-// var collection
 var collections
-
-// pages/exercise/exercise.js
-const stars = [{
-  flag: 0,
-  imgUrl: "http://wximg.youtasc.com/star.png",
-  markedImgUrl: "http://wximg.youtasc.com/f_star.png"
-},
-{
-  flag: 0,
-  imgUrl: "http://wximg.youtasc.com/star.png",
-  markedImgUrl: "http://wximg.youtasc.com/f_star.png"
-},
-{
-  flag: 0,
-  imgUrl: "http://wximg.youtasc.com/star.png",
-  markedImgUrl: "http://wximg.youtasc.com/f_star.png"
-},
-{
-  flag: 0,
-  imgUrl: "http://wximg.youtasc.com/star.png",
-  markedImgUrl: "http://wximg.youtasc.com/f_star.png"
-},
-{
-  flag: 0,
-  imgUrl: "http://wximg.youtasc.com/star.png",
-  markedImgUrl: "http://wximg.youtasc.com/f_star.png"
-}
-]
+var answeredSubjects
+var wrongSubjects
 
 Page({
 
@@ -42,9 +15,15 @@ Page({
    */
   data: {
     isExerciseMode: true, //预设当前项的值
-    settingItems: [
-      { name: 'autoSwitch', value: '答对自动切题' },
-      { name: 'filterDislike', value: '过滤被屏蔽的题目', checked: 'true' },
+    settingItems: [{
+        name: 'autoSwitch',
+        value: '答对自动切题'
+      },
+      {
+        name: 'filterDislike',
+        value: '过滤被屏蔽的题目',
+        checked: 'true'
+      },
     ],
 
     // isCollected: false,
@@ -67,33 +46,42 @@ Page({
   /**
    * 收藏题目
    */
-  clickCollect: function (e) {
+  clickCollect: function(e) {
+    var libIndex = this.data.currentLibraryId - 1
+    // var that = this
     var collection;
     var subjectIndex = e.currentTarget.dataset.index
     var subjectId = this.data.subject[subjectIndex].id
+    // this.setData
+    if (this.data.subject[subjectIndex].isCollected === undefined) {
+      var isCollected = "subject[" + subjectIndex + "].isCollected"
+      console.log("未定义")
+      this.setData({
+        [isCollected]: false
+      })
+    }
     console.log(lib[libIndex])
     if (lib[libIndex].collections === undefined) {
       collection = []
-    }
-    else {
+    } else {
       collection = lib[libIndex].collections
     }
     // 收藏
-    if(this.data.subject[subjectIndex].isCollected === false){
+    if (this.data.subject[subjectIndex].isCollected === false) {
       collection.push(subjectId)
       lib[libIndex].collections = collection
       lib[libIndex].subjects[subjectIndex].isCollected = true
       wx.setStorageSync('librarys', lib);
       var isCollected = "subject[" + subjectIndex + "].isCollected"
       this.setData({
-        [isCollected]: true
+        [isCollected]: lib[libIndex].subjects[subjectIndex].isCollected
       })
     }
     // 取消收藏
-    else{
+    else {
       var collectionDel = []
-      for(var i = 0; i < collection.length; i++){
-        if(collection[i] != subjectId){
+      for (var i = 0; i < collection.length; i++) {
+        if (collection[i] != subjectId) {
           collectionDel.push(collection[i])
         }
         lib[libIndex].collections = collectionDel
@@ -101,46 +89,45 @@ Page({
         wx.setStorageSync('librarys', lib);
         var isCollected = "subject[" + subjectIndex + "].isCollected"
         this.setData({
-          [isCollected]: false
+          [isCollected]: lib[libIndex].subjects[subjectIndex].isCollected
         })
       }
     }
-    // globalData.collectedSubjectIds = lib[libIndex].collections
-    console.log(globalData.collectedSubjectIds)
+    globalData.collectedSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
   },
 
-  clickDislike: function (e) {
+  clickDislike: function(e) {
     this.setData({
       isDislike: !this.data.isDislike,
     })
   },
 
-  clickNote: function (e) {
+  clickNote: function(e) {
     this.setData({
       isShowNotePanel: !this.data.isShowNotePanel,
       isShowSettingPanel: false,
     })
   },
 
-  clickSetting: function (e) {
+  clickSetting: function(e) {
     this.setData({
       isShowNotePanel: false,
       isShowSettingPanel: !this.data.isShowSettingPanel,
     })
   },
 
-  clickInPopupPanel: function (e) {
+  clickInPopupPanel: function(e) {
 
   },
 
-  clearPopup: function (e) {
+  clearPopup: function(e) {
     this.setData({
       isShowNotePanel: false,
       isShowSettingPanel: false,
     })
   },
 
-  changeSwiper: function (e) {
+  changeSwiper: function(e) {
     this.setData({
       swiperCurrent: e.detail.current,
     })
@@ -150,60 +137,76 @@ Page({
   /**
    * 判断所选答案是否正确 
    */
-  confirmAnswer: function (e) {
+  confirmAnswer: function(e) {
     // var that = this
-    var itemIndex = e.target.dataset.index
-    var result = this.data.subject[itemIndex].rightAnswerIndex
+    var answeredSubject
+    var wrongSubject
+    var libIndex = this.data.currentLibraryId - 1
+    var subjectIndex = e.target.dataset.index
+    var subjectId = this.data.subject[subjectIndex].id
+    var result = this.data.subject[subjectIndex].rightAnswerIndex
     var choise = e.target.dataset.select
-    if (this.data.subject[itemIndex].userSelectState.isAnswered === true || !this.data.isExerciseMode) {
-      //  加上!this.data.isExerciseMode，否则背题模式下的选择会显示在答题模式下
-      return;
-    }
+    var userSelectState = "subject[" + subjectIndex + "].userSelectState"; //先用一个变量，把(subject[itemIndex]. userSelectState)用字符串拼接起来,//第一次出错是因为字符串中无端出现空格
+    var answers = "subject[" + subjectIndex + "].answers";
     var resultObject = {
       isAnswered: true,
       isRight: result === choise,
       userSelectIndex: choise
     }
-    var userSelectState = "subject[" + itemIndex + "].userSelectState"; //先用一个变量，把(subject[itemIndex]. userSelectState)用字符串拼接起来,//第一次出错是因为字符串中无端出现空格
-    var answers = "subject[" + itemIndex + "].answers";
-
+    lib[libIndex].answeredSubjects === undefined ? answeredSubject = [] : answeredSubject = lib[libIndex].answeredSubjects
+    lib[libIndex].wrongSubjects === undefined ? wrongSubject = [] : wrongSubject = lib[libIndex].wrongSubjects
     // 答对自动切换到下一题
     var swiperCurrent = this.data.swiperCurrent;
-    if (resultObject.isRight) {
+    if (resultObject.isRight){
       console.log(swiperCurrent);
       swiperCurrent = swiperCurrent < (this.data.subject.length - 1) ? swiperCurrent + 1 : 0;
     }
-
-    this.setData({
-      [userSelectState]: resultObject,
-      [answers]: this.data.subject[itemIndex].answers.map((answer, index) => {
-        if (resultObject.isRight) {
-          if (index === choise) {
-            // answer.optionStyle = resultObject.isRight ? 'user-answer-right' : 'user-answer-wrong';
-            // answer.optionStyle = 'user-answer-right';
-            answer.showRight = true;
+    if (resultObject.isAnswered === true && lib[libIndex].subjects[subjectIndex].userSelectState === undefined && this.data.isExerciseMode) {
+      // 回答错误
+      if (resultObject.isRight === false) {
+        wrongSubject.push(subjectId)
+        lib[libIndex].wrongSubjects = wrongSubject
+      }
+      answeredSubject.push(subjectId)
+      lib[libIndex].answeredSubjects = answeredSubject
+      lib[libIndex].subjects[subjectIndex].userSelectState = resultObject
+      wx.setStorageSync('librarys', lib);
+      // 回答后的交互样式（×和√）
+      this.setData({
+        [userSelectState]: resultObject,
+        [answers]: this.data.subject[subjectIndex].answers.map((answer, index) => {
+          if (resultObject.isRight) {
+            if (index === choise) {
+              // answer.optionStyle = resultObject.isRight ? 'user-answer-right' : 'user-answer-wrong';
+              // answer.optionStyle = 'user-answer-right';
+              answer.showRight = true;
+            } else {
+              // answer.optionStyle = '';
+            }
           } else {
-            // answer.optionStyle = '';
+            if (index === result) {
+              // answer.optionStyle = 'user-answer-right';
+              answer.showRight = true;
+            } else if (index === choise) {
+              // answer.optionStyle = 'user-answer-wrong';
+              answer.showWrong = true;
+            }
           }
-        } else {
-          if (index === result) {
-            // answer.optionStyle = 'user-answer-right';
-            answer.showRight = true;
-          } else if (index === choise) {
-            // answer.optionStyle = 'user-answer-wrong';
-            answer.showWrong = true;
-          }
-        }
+          return answer;
+        }),
+        swiperCurrent: swiperCurrent,
+      });
+    }
+    // if (lib[libIndex].subjects[subjectIndex].userSelectState.isAnswered === true || !this.data.isExerciseMode) {
+    //   //  加上!this.data.isExerciseMode，否则背题模式下的选择会显示在答题模式下
+    //   return;
+    // }
 
-        return answer;
-      }),
-      swiperCurrent: swiperCurrent,
-    });
-    console.log(this.data.subject[itemIndex].userSelectState)
-    // console.log(globalData.currentExerciseType)
+    console.log(this.data.subject[subjectIndex].userSelectState)
+    // globalData.wrongSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
   },
 
-  confirmAnswer2: function (e) {
+  confirmAnswer2: function(e) {
 
   },
 
@@ -270,7 +273,7 @@ Page({
   /**
    * 点击按钮切换答题/背题模式
    */
-  switchExerciseNav: function (e) {
+  switchExerciseNav: function(e) {
     // this.setData({
     //   currentTab: e.target.dataset.current //current来源于data-current
     // })
@@ -278,13 +281,13 @@ Page({
       isExerciseMode: true,
     })
   },
-  switchRememberNav: function (e) {
+  switchRememberNav: function(e) {
     this.setData({
       isExerciseMode: false
     })
   },
-  imageLoad: function (e) {
-    var width = e.detail.width;    //获取图片真实宽度
+  imageLoad: function(e) {
+    var width = e.detail.width; //获取图片真实宽度
     var height = e.detail.height;
     var viewHeight, viewWidth;
     if (width >= height) {
@@ -306,9 +309,9 @@ Page({
     })
   },
 
-  previewImage: function (event) {
-    var index = event.currentTarget.dataset.index;//获取data-src
-    var imgList = event.currentTarget.dataset.list;//获取data-list
+  previewImage: function(event) {
+    var index = event.currentTarget.dataset.index; //获取data-src
+    var imgList = event.currentTarget.dataset.list; //获取data-list
     //图片预览
     wx.previewImage({
       current: imgList[index], // 当前显示图片的http链接
@@ -319,21 +322,24 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
-
+  onLoad: function(options) {
+    var that = this;
+    that.setData({
+      currentLibraryId: options.currentLibraryId
+    })
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {
+  onShow: function() {
     // allen 这subject的值使用全局里面的数据
     const currentLibrary = globalData.librarys.find(item => item.id === globalData.currentLibraryId);
     console.log(currentLibrary)
@@ -342,20 +348,20 @@ Page({
       this.setData({
         subject: currentLibrary.subjects.map(item => ({
           ...item,
-          userSelectState: {
-            isAnswered: false,
-            // isRight: false,
-            // userOption: 'B'
-          },
-          collection: false,
-          star: stars
+          // userSelectState: {
+          //   isAnswered: false,
+          //   // isRight: false,
+          //   // userOption: 'B'
+          // },
+          // isCollected: false,
+          // star: stars
         }))
       })
     }
     var that = this;
     var obj = wx.createSelectorQuery();
     obj.select('.change-content').boundingClientRect();
-    obj.exec(function (rect) {
+    obj.exec(function(rect) {
       that.setData({
         scrollHeight: rect[0].height
       })
@@ -365,35 +371,35 @@ Page({
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function () {
+  onHide: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {
+  onUnload: function() {
 
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {
+  onPullDownRefresh: function() {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {
+  onReachBottom: function() {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
+  onShareAppMessage: function() {
 
   },
 })

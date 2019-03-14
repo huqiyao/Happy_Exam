@@ -1,8 +1,6 @@
 var app = getApp();
 var globalData = app.globalData;
 var util
-// var libIndex = 0
-// var lib = wx.getStorageSync('librarys') || []
 var lib = globalData.librarys
 var collections
 var answeredSubjects
@@ -52,7 +50,6 @@ Page({
     var collection;
     var subjectIndex = e.currentTarget.dataset.index
     var subjectSelected = this.data.subject[subjectIndex]
-    // this.setData
     if (this.data.subject[subjectIndex].isCollected === undefined) {
       var isCollected = "subject[" + subjectIndex + "].isCollected"
       console.log("未定义")
@@ -68,7 +65,30 @@ Page({
     }
     // 收藏
     if (this.data.subject[subjectIndex].isCollected === false) {
-      lib[libIndex].subjects[subjectIndex].isCollected = true
+      // 在随机库里收藏，错题库里同时呈现
+      if (this.data.libraryItem === "随机") {
+        lib[libIndex].subjects[subjectIndex].isCollected = true
+        console.log("wrongSubjects" in lib[libIndex])
+        // if (lib[libIndex].wrongSubjects!= undefined) //陷入死循环
+        // if (wrongSubjects in lib[libIndex]) { //结果是false
+        // 只有在出现错题时收藏才执行
+        if ("wrongSubjects" in lib[libIndex]) {
+          for (var i = 0; i < lib[libIndex].wrongSubjects.length; i++) {
+            if (lib[libIndex].wrongSubjects[i].id === lib[libIndex].subjects[subjectIndex].id) {
+              lib[libIndex].wrongSubjects[i].isCollected = true
+            }
+          }
+        }
+      }
+      // 在错题库里收藏，随机库里同时呈现
+      if (this.data.libraryItem === "错题") {
+        lib[libIndex].wrongSubjects[subjectIndex].isCollected = true
+        for (var i = 0; i < lib[libIndex].subjects.length; i++) {
+          if (lib[libIndex].subjects[i].id === lib[libIndex].wrongSubjects[subjectIndex].id) {
+            lib[libIndex].subjects[i].isCollected = true
+          }
+        }
+      }
       var isCollected = "subject[" + subjectIndex + "].isCollected"
       this.setData({
         [isCollected]: true
@@ -76,23 +96,58 @@ Page({
       collection.push(subjectSelected)
       lib[libIndex].collections = collection
       wx.setStorageSync('librarys', lib);
-      
+
     }
     // 取消收藏
     else {
       var collectionDel = []
+      console.log(subjectSelected)
       for (var i = 0; i < collection.length; i++) {
-        if (collection[i] != subjectSelected) {
+        if (collection[i].id != subjectSelected.id) {
           collectionDel.push(collection[i])
         }
-        lib[libIndex].subjects[subjectIndex].isCollected = false
-        lib[libIndex].collections = collectionDel
-        wx.setStorageSync('librarys', lib);
-        var isCollected = "subject[" + subjectIndex + "].isCollected"
-        this.setData({
-          [isCollected]:false
-        })
       }
+      console.log(collectionDel)
+
+      // lib[libIndex].collections[subjectIndex].isCollected = false
+      // 在随机库里取消收藏，随机库里同时取消
+      if (this.data.libraryItem === "随机") {
+        lib[libIndex].subjects[subjectIndex].isCollected = false
+        for (var i = 0; i < lib[libIndex].wrongSubjects.length; i++) {
+          if (lib[libIndex].wrongSubjects[i].id === lib[libIndex].subjects[subjectIndex].id) {
+            lib[libIndex].wrongSubjects[i].isCollected = false
+          }
+        }
+      }
+      // 在错题库里取消收藏，随机库里同时取消
+      if (this.data.libraryItem === "错题") {
+        lib[libIndex].wrongSubjects[subjectIndex].isCollected = false
+        for (var i = 0; i < lib[libIndex].subjects.length; i++) {
+          if (lib[libIndex].subjects[i].id === lib[libIndex].wrongSubjects[subjectIndex].id) {
+            lib[libIndex].subjects[i].isCollected = false
+          }
+        }
+      }
+      // 在收藏库里取消收藏，错题库与随机库中都取消
+      if (this.data.libraryItem === "收藏") {
+        lib[libIndex].collections[subjectIndex].isCollected = false
+        for (var i = 0; i < lib[libIndex].subjects.length; i++) {
+          if (lib[libIndex].subjects[i].id === lib[libIndex].collections[subjectIndex].id) {
+            lib[libIndex].subjects[i].isCollected = false
+          }
+        }
+        for (var i = 0; i < lib[libIndex].wrongSubjects.length; i++) {
+          if (lib[libIndex].wrongSubjects[i].id === lib[libIndex].collections[subjectIndex].id) {
+            lib[libIndex].wrongSubjects[i].isCollected = false
+          }
+        }
+      }
+      lib[libIndex].collections = collectionDel
+      wx.setStorageSync('librarys', lib);
+      var isCollected = "subject[" + subjectIndex + "].isCollected"
+      this.setData({
+        [isCollected]: false
+      })
     }
     // globalData.collectedSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
   },
@@ -158,7 +213,7 @@ Page({
     lib[libIndex].wrongSubjects === undefined ? wrongSubject = [] : wrongSubject = lib[libIndex].wrongSubjects
     // 答对自动切换到下一题
     var swiperCurrent = this.data.swiperCurrent;
-    if (resultObject.isRight){
+    if (resultObject.isRight) {
       console.log(swiperCurrent);
       swiperCurrent = swiperCurrent < (this.data.subject.length - 1) ? swiperCurrent + 1 : 0;
     }
@@ -324,12 +379,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    
+
     var that = this;
     that.setData({
       currentLibraryId: options.currentLibraryId,
       libraryItem: options.libraryItemType,
-      
+
     })
     // this.setData({
     //   libraryItem: options.libraryItemType,
@@ -364,16 +419,16 @@ Page({
     if (currentLibrary) {
       console.log(currentLibrary.subjects)
       // console.log(options.libraryItemType)
-      if(this.data.libraryItem === "随机"){
+      if (this.data.libraryItem === "随机") {
         this.setData({
           subject: currentLibrary.subjects.map(item => ({
-          ...item,
-        //       userSelectState: {
-        //   isAnswered: false,
-        // },
-        // isCollected: false,
-        // star: stars
-        }))
+            ...item,
+            //       userSelectState: {
+            //   isAnswered: false,
+            // },
+            // isCollected: false,
+            // star: stars
+          }))
         })
       }
       if (this.data.libraryItem === "收藏") {

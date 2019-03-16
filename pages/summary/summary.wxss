@@ -41,6 +41,7 @@
 .complete_box {
   margin: auto;
   border: 1px solid gray;
+  margin-bottom: 20rpx;
 }
 
 .lib-name {
@@ -83,16 +84,18 @@
 
 .right-num {
   background-color: #0c3;
-  width: 50%;
+  /* width: 50%; */
 }
 
 .wrong-num {
   background-color: #f63;
-  width: 20%;
+  /* width: 20%; */
 }
 
 .uncomplete-num {
-  width: 30%;
+  /* width: 30%; */
+  z-index: 999;
+  background-color:white;
 }
 
 .total-num {

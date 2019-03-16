@@ -7,11 +7,11 @@
   </view>
   <view class='summary-body'>
     <view hidden="{{statistics!='complete'}}">
-      <view class='complete_box'>
-        <view class='lib-name'>语文</view>
-        <view class='lib-detail'>
-          <view class='detail-item special-one'>
-            <span class='type-name'>语法题:</span>
+      <view class='complete_box' wx:for="{{lib}}" wx:for-item="libItem" wx:for-index="libIndex">
+        <view class='lib-name'>{{libItem.name}}</view>
+        <view class='lib-detail' data-index='{{libIndex}}'>
+          <view class='detail-item special-one' wx:for='{{lib[libIndex].groups}}' wx:for-item="groupItem">
+            <span class='type-name'>{{groupItem.name}}</span>
             <view class='complete-bar'>
               <view class='right-num'>50</view>
               <view class='wrong-num'>20</view>
@@ -22,11 +22,13 @@
           <view class='detail-item total-one'>
             <span class='type-name'>总计:</span>
             <view class='complete-bar'>
-              <view class='right-num'></view>
-              <view class='wrong-num'></view>
-              <view class='uncomplete-num'></view>
+              <!-- <view class='right-num'>{{lib[libIndex].answeredSubjects.length - lib[libIndex].wrongSubjects.length}}</view> -->
+              <view class='right-num' style="width:{{100*((lib[libIndex].answeredSubjects === undefinded?0:lib[libIndex].answeredSubjects.length)-(lib[libIndex].wrongSubjects === undefinded?0:lib[libIndex].wrongSubjects.length))/lib[libIndex].subjects.length  + '%'}}">{{(lib[libIndex].answeredSubjects === undefinded?0:lib[libIndex].answeredSubjects.length)-(lib[libIndex].wrongSubjects === undefinded?0:lib[libIndex].wrongSubjects.length)}}</view>
+              <!-- <view class='wrong-num'>{{lib[libIndex].wrongSubjects.length}}</view> -->
+              <view class='wrong-num' style="width:{{100*(lib[libIndex].wrongSubjects === undefinded?0:lib[libIndex].wrongSubjects.length)/lib[libIndex].subjects.length  + '%'}}">{{lib[libIndex].wrongSubjects === undefinded?0:lib[libIndex].wrongSubjects.length}}</view>
+              <view class='uncomplete-num' style="width:{{100*(lib[libIndex].subjects.length-(lib[libIndex].wrongSubjects === undefinded?0:lib[libIndex].wrongSubjects.length))/lib[libIndex].subjects.length  + '%'}}">{{lib[libIndex].subjects.length-(lib[libIndex].answeredSubjects === undefinded?0:lib[libIndex].answeredSubjects.length)}}</view>
             </view>
-            <span class='total-num'>500</span>
+            <span class='total-num'>{{lib[libIndex].subjects.length}}</span>
           </view>
         </view>
       </view>

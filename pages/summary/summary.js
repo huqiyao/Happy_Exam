@@ -1,11 +1,15 @@
 // pages/summary/summary.js
+var app = getApp();
+var globalData = app.globalData;
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    statistics:'achieve'
+    statistics:'complete',
+    lib: globalData.librarys,
+    // rightNumWidth: "100 * ((lib[libIndex].answeredSubjects === undefinded ? 0 : lib[libIndex].answeredSubjects.length) - (lib[libIndex].wrongSubjects === undefinded ? 0 : lib[libIndex].wrongSubjects.length)) / lib[libIndex].subjects.length + '%'"
   },
 
   /**
@@ -35,7 +39,7 @@ this.setData({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    console.log(this.data.lib)
   },
 
   /**

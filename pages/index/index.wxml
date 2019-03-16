@@ -14,7 +14,6 @@
     <view class='progress-circle'>
       <canvas class='circle' style='width:200rpx;height:200rpx;' canvas-id='canvasArc'></canvas>
       <canvas class='circle-back' style='width:200rpx;height:200rpx;' canvas-id='canvasBack'></canvas>
-      <!-- <view class='circle-num'>中间</view> -->
     </view>
   </view>
   <view class='home-middle'>
@@ -32,4 +31,5 @@
     </view>
   </view>
   <view class='genius-score'>学霸点：700（准学霸）</view>
+  <!-- 专项练习选择框 -->
 </view>

@@ -1,18 +1,23 @@
 //index.js
-// var collections
 var app = getApp();
 var globalData = app.globalData;
+var common = require("../../utils/util.js");
 var context = new wx.createCanvasContext('canvasArc', this);
 var back = new wx.createCanvasContext('canvasBack')
 var sAngle = 1.5 * Math.PI,
   eAngle = 0;
-var start_num, end_num
+var start_num = null,
+  end_num = null
+var libIndex = common.getLibIndex()
+var type
+var libraryItemType
 Page({
   data: {
     exerciseType: ["随机练习", "专项练习", "我的收藏", "我的错题"],
     show: false, //控制下拉列表的显示隐藏，false隐藏、true显示
     selectData: [], //下拉列表的数据
     index: 0, //选择的下拉列表下标
+    showChoiceBox: false
   },
   /**
    * 进度条
@@ -26,31 +31,19 @@ Page({
     back.arc(41, 43, 38, 0, 2 * Math.PI, false)
     back.stroke()
     back.draw()
-    // 画动态进度条
-    // this.canvas()
   },
   canvas: function() {
-    // var i = 1
-    var that = this;
-    // if (i <= start_num) {
     console.log('start_num:', start_num)
     eAngle = start_num * 2 * Math.PI / end_num + 1.5 * Math.PI;
-    // setTimeout(function() {
     context.setStrokeStyle("#41C7DB")
     context.setLineWidth(5)
     // context.fillText(strat_num * 5 <= 100 ? strat_num * 5 + '%' : 100 + '%', 25, 48)
+    // 舍去小数了
     context.fillText((start_num / end_num * 100).toFixed(0) + '%', 28, 48)
     context.setFontSize(16)
     context.arc(41, 43, 38, sAngle, eAngle, false)
     context.stroke()
     context.draw()
-    // that.canvas()
-    // i++
-    // }, 2000)
-    // } 
-    // else {
-    //   console.log('strat_num_end:', strat_num)
-    // }
   },
   /**
    * 选择练习科目
@@ -62,27 +55,41 @@ Page({
     });
   },
   // 点击下拉列表
-  optionTap: function(e) {
+optionTap: function(e) {
     let Index = e.currentTarget.dataset.index; //获取点击的下拉列表的下标
     globalData.currentLibraryId = globalData.librarys[Index].id;
+    libIndex = common.getLibIndex()
     this.setData({
       index: Index,
       show: !this.data.show,
-      collectedSubjects: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections),
-      wrongSubjects: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects)
+      collectedSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].collections),
+      wrongSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects),
+      lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex]
     });
-    start_num = globalData.librarys[globalData.currentLibraryId - 1].answeredSubjects === undefined ? 0 : globalData.librarys[globalData.currentLibraryId - 1].answeredSubjects.length;
-    end_num = globalData.librarys[globalData.currentLibraryId - 1].subjects.length;
-    var that = this;
-    that.canvas()
+    start_num = globalData.librarys[libIndex].answeredSubjects === undefined ? 0 : globalData.librarys[libIndex].answeredSubjects.length;
+    end_num = globalData.librarys[libIndex].subjects.length;
+    // var that = this;
+    this.canvas()
+    console.log(this.data.lib)
   },
+
   /**
    * 页面跳转
    */
+  //专项练习的情况
+  showChoiceBox: function () {
+    this.setData({
+      showChoiceBox: !this.data.showChoiceBox
+    })
+  },
+  radioChange: function (e) {
+    // libraryItemType = ""
+    console.log(e.detail.value)
+  },
+  // 随机练习、我的收藏、我的错题的情况
   toExercise: function(e) {
     // globalData.currentExerciseType = e.currentTarget.dataset.type
-    var type = e.currentTarget.dataset.type
-    var libraryItemType
+    type = e.currentTarget.dataset.type
     if (type === "随机练习") {
       libraryItemType = "随机"
     }
@@ -92,9 +99,7 @@ Page({
     if (type === "我的错题") {
       libraryItemType = "错题"
     }
-    console.log(libraryItemType)
     wx.navigateTo({
-      // url: '/pages/exercise/exercise?currentExerciseType=' + type,
       url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + libraryItemType,
       // success: function (e) {  //切换过去要刷新
       //   var page = getCurrentPages().pop();
@@ -104,7 +109,9 @@ Page({
       //   page.onLoad()
       // }
     })
+    console.log(libraryItemType)
   },
+  
   /**
    * 生命周期函数--监听页面加载
    */
@@ -122,18 +129,22 @@ Page({
       index: curIndex
     });
   },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
   onShow: function(options) {
-    // this.optionTap
+    console.log(libIndex)
     this.setData({
-      // collectedSubjectIds: globalData.collectedSubjectIds
-      collectedSubjects: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].collections),
-      wrongSubjects: (globalData.librarys[globalData.currentLibraryId - 1]) === undefined ? [] : ((wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[globalData.currentLibraryId - 1].wrongSubjects)
+      collectedSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].collections),
+      wrongSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects),
+      lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex],
     })
-    console.log(globalData.librarys[globalData.currentLibraryId - 1])
-    start_num = globalData.librarys[globalData.currentLibraryId - 1].answeredSubjects === undefined ? 0 : globalData.librarys[globalData.currentLibraryId - 1].answeredSubjects.length;
-    end_num = globalData.librarys[globalData.currentLibraryId - 1].subjects.length;
-    var that = this;
-    that.canvas()
+    start_num = libIndex === undefined ? 0 : (globalData.librarys[libIndex].answeredSubjects === undefined ? 0 : globalData.librarys[libIndex].answeredSubjects.length)
+    end_num = libIndex === undefined ? 0 : globalData.librarys[libIndex].subjects.length;
+    if (end_num != 0) {
+      this.canvas()
+    }
   }
 
 })

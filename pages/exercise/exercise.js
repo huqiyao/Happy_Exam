@@ -1,11 +1,12 @@
 var app = getApp();
 var globalData = app.globalData;
 var util
+var common = require("../../utils/util.js");
+var libIndex
 var lib = globalData.librarys
 var collections
 var answeredSubjects
 var wrongSubjects
-
 Page({
 
   /**
@@ -45,7 +46,7 @@ Page({
    * 收藏题目
    */
   clickCollect: function(e) {
-    var libIndex = this.data.currentLibraryId - 1
+    libIndex = common.getLibIndex()
     // var that = this
     var collection;
     var subjectIndex = e.currentTarget.dataset.index
@@ -197,7 +198,7 @@ Page({
     // var that = this
     var answeredSubject
     var wrongSubject
-    var libIndex = this.data.currentLibraryId - 1
+    libIndex = common.getLibIndex()
     var subjectIndex = e.target.dataset.index
     var subjectSelected = this.data.subject[subjectIndex]
     var result = this.data.subject[subjectIndex].rightAnswerIndex
@@ -253,79 +254,14 @@ Page({
         swiperCurrent: swiperCurrent,
       });
     }
-    // if (lib[libIndex].subjects[subjectIndex].userSelectState.isAnswered === true || !this.data.isExerciseMode) {
-    //   //  加上!this.data.isExerciseMode，否则背题模式下的选择会显示在答题模式下
-    //   return;
-    // }
 
     console.log(this.data.subject[subjectIndex].userSelectState)
-    // globalData.wrongSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
   },
 
   confirmAnswer2: function(e) {
 
   },
 
-  /**
-   * 给题目评价打星
-   */
-  // markIt: function(e) {
-  //   var starIndex = e.target.dataset.select;
-  //   var itemIndex = e.target.dataset.index;
-  //   var starFlag = this.data.subject[itemIndex].star[starIndex].flag
-  //   console.log(starIndex)
-  //   console.log(itemIndex)
-  //   console.log(starFlag)
-  //   if (starFlag === 0) {
-  //     for (var i = 0; i <= starIndex; i++) {
-  //       var thisFlag = "subject[" + itemIndex + "].star[" + i + "].flag"
-  //       this.setData({
-  //         [thisFlag]: 1
-  //       })
-  //     }
-  //   } else {
-  //     for (var j = starIndex + 1; j <= 5; j++) {
-  //       var thisFlag = "subject[" + itemIndex + "].star[" + j + "].flag"
-  //       this.setData({
-  //         [thisFlag]: 0
-  //       })
-  //     }
-  //   }
-  // },
-  // /**
-  //  * 收藏题目
-  //  */
-  // collectIt: function(e) {
-  //   var itemIndex = e.target.dataset.index;
-  //   var isCollected = this.data.subject[itemIndex].collection
-  //   console.log(itemIndex)
-  //   console.log(isCollected)
-  //   var thisCollection = "subject[" + itemIndex + "].collection"
-  //   if (isCollected === false) {
-  //     this.setData({
-  //       [thisCollection]: true
-  //     })
-  //     //修改全局变量的值
-  //     var collectedSubject = globalData.collectedSubjectIds;
-  //     if (collectedSubject.indexOf(itemIndex) == -1) {
-  //       collectedSubject.push(itemIndex)
-  //     }
-  //     console.log(isCollected)
-  //     console.log(collectedSubject)
-  //   } else {
-  //     this.setData({
-  //       [thisCollection]: false
-  //     })
-  //     console.log(isCollected)
-  //   }
-
-  //   wx.showToast({
-  //     title: isCollected ? '已取消收藏' : '收藏成功',
-  //     duration: 1000,
-  //     icon: "success",
-  //     mask: true
-  //   })
-  // },
   /**
    * 点击按钮切换答题/背题模式
    */
@@ -386,20 +322,6 @@ Page({
       libraryItem: options.libraryItemType,
 
     })
-    // this.setData({
-    //   libraryItem: options.libraryItemType,
-    //   // subject: currentLibrary.subjects.map(item => ({
-    //   //   ...item,
-    //   //   // userSelectState: {
-    //   //   //   isAnswered: false,
-    //   //   //   // isRight: false,
-    //   //   //   // userOption: 'B'
-    //   //   // },
-    //   //   // isCollected: false,
-    //   //   // star: stars
-    //   // }))
-    // })
-    // console.log(this.data.libraryItem)
   },
 
   /**

@@ -9,7 +9,6 @@ Page({
   data: {
     statistics:'complete',
     lib: globalData.librarys,
-    // rightNumWidth: "100 * ((lib[libIndex].answeredSubjects === undefinded ? 0 : lib[libIndex].answeredSubjects.length) - (lib[libIndex].wrongSubjects === undefinded ? 0 : lib[libIndex].wrongSubjects.length)) / lib[libIndex].subjects.length + '%'"
   },
 
   /**

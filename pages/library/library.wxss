@@ -1,6 +1,6 @@
 /* 全局container样式 */
 
-.home-container {
+/* .home-container {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -12,4 +12,94 @@
 .load-result-box {
   background-color: white;
   padding: 20rpx;
+} */
+
+.divide-line {
+  height: 2rpx;
+  background: #ccc;
+  position: absolute;
+  width: 100%;
+}
+
+.item-box {
+  border-bottom:1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+.library-cover {
+  width:100rpx;
+  height:100rpx;
+  margin-left: 20rpx;
+}
+
+.library-cover image {
+  width:100rpx;
+  height:100rpx;
+}
+
+.content {
+  padding-left: 20rpx;
+  height: 100rpx;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.library-name {
+  height: 50rpx;
+  line-height: 50rpx;
+  width: 100%;
+}
+
+.library-group {
+  height: 50rpx;
+  width: 100%;
+  display:flex;
+  align-items:flex-end;
+}
+
+.group-box {
+  display: inline-block;
+  /* margin-top: 20rpx; */
+  margin-right: 10rpx;
+  padding: 0 15rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  font-size: 26rpx;
+  box-sizing: border-box;
+  border: 2rpx solid black;
+  border-radius: 20rpx;
+}
+
+.add-btn {
+  position: fixed;
+  width: 80rpx;
+  height: 80rpx;
+  right: 20rpx;
+  bottom: 20rpx;
+  border: 2rpx solid black;
+  border-radius: 100%;
+  background: rgba(144,144,144,.3);
+  text-align: center;
+}
+
+.add-btn image {
+  margin-top: 20rpx;
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.popup-menu {
+  position: absolute;
+  width: 300rpx;
+  height: 60rpx;
+  border: 2rpx solid black;
+}
+
+.menu-item {
+  height: 60rpx;
+  width: 100%;
+  line-height: 60rpx;
+  padding: 0 20rpx;
 }

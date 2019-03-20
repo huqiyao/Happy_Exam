@@ -20,7 +20,7 @@
     <view class='choice-item' bindtap='toExercise' data-type='{{exerciseType[0]}}'>
       <text>随机练习</text>
     </view>
-    <view class='choice-item' bindtap='showChoiceBox' data-type='{{exerciseType[1]}}'>
+    <view class='choice-item' bindtap='showChoiceBox'>
       <text>专项练习</text>
     </view>
     <view class='choice-item' bindtap='toExercise' data-type='{{exerciseType[2]}}'>
@@ -33,11 +33,11 @@
   <view class='genius-score'>学霸点：700（准学霸）</view>
   <!-- 专项练习选择框 -->
   <view class='choose-box' style='position:absolute;background-color:pink;height:auto;width:60%;top:300rpx;left:20%;' hidden='{{!showChoiceBox}}'>
-    <radio-group name="radio-group"  wx:for='{{lib.groups}}' wx:for-item='groupItem' bindchange="radioChange">
-      <label style='display:block;border:1px solid black;'>
-        <radio value="{{groupItem.id}}" />
+    <view name="radio-group"  wx:for='{{lib.groups}}' wx:for-item='groupItem' >
+      <view style='border:1px solid black;text-align:center' bindtap='toExercise' data-id="{{groupItem.id}}" data-type='{{exerciseType[1]}}'>
+        <!-- <radio value="{{groupItem.id}}" /> -->
         {{groupItem.name}}
-      </label>
-    </radio-group>
+      </view>
+    </view>
   </view>
 </view>

@@ -55,7 +55,7 @@ Page({
     });
   },
   // 点击下拉列表
-optionTap: function(e) {
+  optionTap: function(e) {
     let Index = e.currentTarget.dataset.index; //获取点击的下拉列表的下标
     globalData.currentLibraryId = globalData.librarys[Index].id;
     libIndex = common.getLibIndex()
@@ -64,7 +64,7 @@ optionTap: function(e) {
       show: !this.data.show,
       collectedSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].collections),
       wrongSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects),
-      lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex]
+      lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex],
     });
     start_num = globalData.librarys[libIndex].answeredSubjects === undefined ? 0 : globalData.librarys[libIndex].answeredSubjects.length;
     end_num = globalData.librarys[libIndex].subjects.length;
@@ -76,20 +76,28 @@ optionTap: function(e) {
   /**
    * 页面跳转
    */
-  //专项练习的情况
-  showChoiceBox: function () {
+  showChoiceBox: function() {
     this.setData({
       showChoiceBox: !this.data.showChoiceBox
     })
   },
-  radioChange: function (e) {
-    // libraryItemType = ""
-    console.log(e.detail.value)
-  },
-  // 随机练习、我的收藏、我的错题的情况
+  
   toExercise: function(e) {
     // globalData.currentExerciseType = e.currentTarget.dataset.type
     type = e.currentTarget.dataset.type
+    //专项练习的情况
+    if (type === "专项练习") {
+      var selectedGroupId = e.currentTarget.dataset.id
+      console.log(selectedGroupId)
+      libraryItemType = "专项"
+      wx.navigateTo({
+        url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + libraryItemType + "&selectedGroupId=" + selectedGroupId,
+      })
+      this.setData({
+        showChoiceBox: false
+      })
+    }
+    // 随机练习、我的收藏、我的错题的情况
     if (type === "随机练习") {
       libraryItemType = "随机"
     }
@@ -101,21 +109,18 @@ optionTap: function(e) {
     }
     wx.navigateTo({
       url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + libraryItemType,
-      // success: function (e) {  //切换过去要刷新
-      //   var page = getCurrentPages().pop();
-      //   if (page == undefined || page == null) {
-      //     return
-      //   }
-      //   page.onLoad()
-      // }
     })
-    console.log(libraryItemType)
   },
-  
+
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {
+  onLoad: function(options) {},
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function(options) {
     let curIndex = 0;
     const selectData = [];
     globalData.librarys.forEach((item, index) => {
@@ -128,12 +133,7 @@ optionTap: function(e) {
       selectData,
       index: curIndex
     });
-  },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function(options) {
     console.log(libIndex)
     this.setData({
       collectedSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].collections),

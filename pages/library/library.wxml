@@ -1,7 +1,22 @@
-<view class='home-container'>
-  <button bindtap="loadFile">从本地读取文件（json）</button>
-  <span>读取结果：</span>
-  <view class='load-result-box'>
-    <span>{{loadResult}}</span>
+<view class='box' bindtap='closePopup'>
+  <view class="divide-line"></view>
+  <scroll-view scroll-y='true' style="height:{{height}}px">
+    <view wx:for="{{librarys}}" bindlongpress="popupMenu" data-id="{{item.id}}" wx:key="{{index}}" class="item-box" style="height:{{150}}rpx;width:100%;line-height:{{150}}rpx;background: {{currentLibraryId === item.id ? '#66CCCC' : 'white'}}">
+      <view class="library-cover">
+        <image src="{{item.coverImageBase64}}"></image>
+      </view>
+      <view class="content">
+        <view class="library-name">{{item.name + ' (' + item.subjects.length + ')'}}</view>
+        <view class="library-group">
+          <view wx:for="{{item.groups}}" class="group-box">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+  <view class="add-btn" bindtap="loadFile">
+    <image src='/images/add.png'></image>
+  </view>
+  <view wx:if="{{isPopupMenu}}" class="popup-menu" style="left: {{popupX}}px;top: {{popupY}}px;">
+    <view class="menu-item" bindtap="deleteLib">删除题库</view>
   </view>
 </view>

@@ -4,15 +4,17 @@ var util = require("../../utils/util.js");
 var collections
 var answeredSubjects
 var wrongSubjects
+var logs
 var currentLibrary
 var answeredCount = 0
 var rightCount = 0
-var logs
 var startRememberNum = 0
 var endRememberNum = 0
 var rememberCount = 0
+var exerciseSpendTime = 0
+var rememberSpendTime = 0
+var startExerciseTime, startRememberTime, endExerciseTime, endRememberTime
 Page({
-
   /**
    * 页面的初始数据
    */
@@ -316,12 +318,18 @@ Page({
     })
     endRememberNum = this.data.swiperCurrent
     rememberCount = rememberCount + (endRememberNum - startRememberNum)
+    startExerciseTime = new Date()
+    endRememberTime = startExerciseTime
+    rememberSpendTime = rememberSpendTime + (endRememberTime - startRememberTime)
   },
   switchRememberNav: function(e) {
     this.setData({
       isExerciseMode: false
     })
     startRememberNum = this.data.swiperCurrent
+    startRememberTime = new Date()
+    endExerciseTime = startRememberTime
+    exerciseSpendTime = exerciseSpendTime+(endExerciseTime - startExerciseTime)
   },
   imageLoad: function(e) {
     var width = e.detail.width; //获取图片真实宽度
@@ -388,14 +396,13 @@ Page({
   onShow: function() {
     // 记录进入刷题页的时间
     var startDate = util.formatTime(new Date()).split(" ")[0];
-    var startTime = new Date()
+    startExerciseTime = new Date()
     // var startTime = util.formatTime(new Date()).split(" ")[1];
     // allen 这subject的值使用全局里面的数据
     const currentLibrary = globalData.librarys.find(item => item.id === globalData.currentLibraryId);
     this.setData({
       currentLibrary: currentLibrary,
       startDate: startDate,
-      startTime:startTime,
       logs: (wx.getStorageSync('logs') || []) === undefined ? [] : (wx.getStorageSync('logs') || [])
     })
     console.log(currentLibrary)
@@ -461,24 +468,32 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function() {
-    // 背题数量
+    endExerciseTime = new Date();
+    endRememberTime = endExerciseTime
     if(!this.data.isExerciseMode){
+      // 背题数量
       endRememberNum = this.data.swiperCurrent
       rememberCount = rememberCount + (endRememberNum - startRememberNum)
       console.log(rememberCount)
+      // 背题时间
+      rememberSpendTime = rememberSpendTime + (endRememberTime - startRememberTime)
     }
-    
-
+    else{
+      // 刷题时间
+      exerciseSpendTime = exerciseSpendTime + (endExerciseTime - startExerciseTime)
+    }
+    rememberSpendTime = parseInt(rememberSpendTime)/1000
+    exerciseSpendTime = parseInt(exerciseSpendTime) / 1000
     // 记录此次刷题各种数据
     var log = (wx.getStorageSync('logs') || []) === undefined ? [] : (wx.getStorageSync('logs') || [])
     // var endDate = util.formatTime(new Date()).split(" ")[0];
-    var endTime = new Date();
-    var difference = parseInt(endTime - this.data.startTime)/1000
-    var spendTime = difference < 60 ? difference.toFixed(0) + "秒" : (difference / 60).toFixed(0) + "分钟"
-    console.log(spendTime)
+    // var difference = parseInt(endTime - this.data.startTime)/1000
+    // var spendTime = difference < 60 ? difference.toFixed(0) + "秒" : (difference / 60).toFixed(0) + "分钟"
+    // console.log(spendTime)
     var thisRecord = {
       startDate:this.data.startDate,
-      spendTime: spendTime,
+      exerciseSpendTime: exerciseSpendTime < 60 ? exerciseSpendTime.toFixed(0) + "秒" : (exerciseSpendTime / 60).toFixed(0) + "分钟",
+      rememberSpendTime: rememberSpendTime < 60 ? rememberSpendTime.toFixed(0) + "秒" : (rememberSpendTime / 60).toFixed(0) + "分钟",
       answeredCount:answeredCount,
       rightCount:rightCount,
       exerciseType:this.data.libraryItem,
@@ -487,7 +502,6 @@ Page({
     }
     log.push(thisRecord)
     wx.setStorageSync('logs',log)
-    // console.log(thisRecord)
   },
 
   /**

@@ -44,6 +44,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
+    var practiceArr = []
     var logArr = []
     this.setData({
       lib: globalData.librarys,
@@ -54,6 +55,7 @@ Page({
     var log = this.data.log
     // 统计历程
     var map = new Map()
+    var obj = new Object()
    log.forEach((item, index) => {
      console.log(item)
       if(!map.has(item.startDate)){
@@ -70,7 +72,7 @@ Page({
       logArr.push(value)
       console.log(logArr)
     });
-    // console.log(map.keys())
+    console.log(map)
     this.setData({
       logArr:logArr
     })

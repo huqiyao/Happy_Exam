@@ -64,29 +64,29 @@
             </view>
           </view>
         </scroll-view>
-        <!-- 底部操作工具栏 -->
-        <view class="exercise-bottom" >
-          <view class="bottom-bar">
-            <view class="icon-box" bindtap='clickCollect' data-index='{{father_index}}'>
-              <image src="{{subject[father_index].isCollected?'/images/f_collect.png':'/images/collect.png'}}"></image>
-            </view>
-            <view class="icon-box" bindtap='clickDislike'>
-              <image src="{{isDislike?'/images/f_dislike.png':'/images/dislike.png'}}"></image>
-            </view>
-            <view class="icon-box" catchtap='clickNote'>
-              <image src='/images/note.png'></image>
-            </view>
-            <view class="icon-box" catchtap='clickSetting'>
-              <image src='/images/setting.png'></image>
-            </view>
-          </view>
-        </view>
       </swiper-item>
     </swiper>
   </view>
 
+  <!-- 底部操作工具栏 -->
+  <view class="exercise-bottom">
+    <view class="bottom-bar">
+      <view class="icon-box" bindtap='clickCollect' data-index='{{father_index}}'>
+        <image src="{{subject[father_index].isCollected?'/images/f_collect.png':'/images/collect.png'}}"></image>
+      </view>
+      <view class="icon-box" bindtap='clickDislike'>
+        <image src="{{isDislike?'/images/f_dislike.png':'/images/dislike.png'}}"></image>
+      </view>
+      <view class="icon-box" catchtap='clickNote'>
+        <image src='/images/note.png'></image>
+      </view>
+      <view class="icon-box" catchtap='clickSetting'>
+        <image src='/images/setting.png'></image>
+      </view>
+    </view>
+  </view>
 
-  
+
 
   <view class="note-box" wx:if="{{isShowNotePanel}}" catchtap='clickInPopupPanel'>
     <view class="input-box">

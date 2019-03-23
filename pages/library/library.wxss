@@ -1,18 +1,13 @@
 /* 全局container样式 */
 
-/* .home-container {
+.home-container {
   position: absolute;
   height: 100%;
   width: 100%;
-  background-color: lightcyan;
+  /* background-color: lightcyan; */
   z-index: -10;
   overflow: hidden;
 }
-
-.load-result-box {
-  background-color: white;
-  padding: 20rpx;
-} */
 
 .divide-line {
   height: 2rpx;
@@ -61,10 +56,11 @@
 
 .group-box {
   display: inline-block;
-  /* margin-top: 20rpx; */
+  overflow: hidden;
   margin-right: 10rpx;
   padding: 0 15rpx;
   height: 40rpx;
+  min-width: 110rpx;
   line-height: 40rpx;
   font-size: 26rpx;
   box-sizing: border-box;
@@ -94,7 +90,9 @@
   position: absolute;
   width: 300rpx;
   height: 60rpx;
-  border: 2rpx solid black;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  border-radius: 6px;
+  background: white;
 }
 
 .menu-item {

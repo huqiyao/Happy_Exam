@@ -170,6 +170,7 @@ Page({
               try {
                 const library = JSON.parse(res.data);
                 app.globalData.librarys.push(library);
+                app.globalData.currentLibraryId = library.id;
                 wx.setStorage({
                   key: 'librarys',
                   data: app.globalData.librarys,
@@ -180,6 +181,7 @@ Page({
                 that.setData({
                   loadResult: JSON.stringify(app.globalData.librarys),
                   librarys: app.globalData.librarys,
+                  currentLibraryId: app.globalData.currentLibraryId
                 })
               } catch(e) {
                 console.log(JSON.stringify(e));

@@ -1,23 +1,23 @@
 //index.js
 var app = getApp();
 var globalData = app.globalData;
-var common = require("../../utils/util.js");
+var util = require("../../utils/util.js");
 var context = new wx.createCanvasContext('canvasArc', this);
 var back = new wx.createCanvasContext('canvasBack')
 var sAngle = 1.5 * Math.PI,
   eAngle = 0;
 var start_num = null,
   end_num = null
-var libIndex = common.getLibIndex()
+var libIndex = util.getLibIndex()
 var type
-var libraryItemType
 Page({
   data: {
     exerciseType: ["随机练习", "专项练习", "我的收藏", "我的错题"],
     show: false, //控制下拉列表的显示隐藏，false隐藏、true显示
     selectData: [], //下拉列表的数据
     index: 0, //选择的下拉列表下标
-    showChoiceBox: false
+    showChoiceBox: false,
+    groups: [],
   },
   /**
    * 进度条
@@ -58,7 +58,7 @@ Page({
   optionTap: function(e) {
     let Index = e.currentTarget.dataset.index; //获取点击的下拉列表的下标
     globalData.currentLibraryId = globalData.librarys[Index].id;
-    libIndex = common.getLibIndex()
+    libIndex = util.getLibIndex()
     this.setData({
       index: Index,
       show: !this.data.show,
@@ -66,6 +66,7 @@ Page({
       wrongSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects),
       lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex],
     });
+    this.setGroups();
     start_num = globalData.librarys[libIndex].answeredSubjects === undefined ? 0 : globalData.librarys[libIndex].answeredSubjects.length;
     end_num = globalData.librarys[libIndex].subjects.length;
     // var that = this;
@@ -87,35 +88,60 @@ Page({
     type = e.currentTarget.dataset.type
     //专项练习的情况
     if (type === "专项练习") {
-      var selectedGroupId = e.currentTarget.dataset.id
+      var selectedGroupId = e.target.dataset.id
+      var selectedGroupName = e.target.dataset.name
       console.log(selectedGroupId)
-      libraryItemType = "专项"
+      // libraryItemType = "专项"
       wx.navigateTo({
-        url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + libraryItemType + "&selectedGroupId=" + selectedGroupId,
+        url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + type + "&selectedGroupId=" + selectedGroupId + "&selectedGroupName=" + selectedGroupName,
       })
       this.setData({
         showChoiceBox: false
       })
     }
     // 随机练习、我的收藏、我的错题的情况
-    if (type === "随机练习") {
-      libraryItemType = "随机"
-    }
-    if (type === "我的收藏") {
-      libraryItemType = "收藏"
-    }
-    if (type === "我的错题") {
-      libraryItemType = "错题"
-    }
+    // if (type === "随机练习") {
+    //   libraryItemType = "随机"
+    // }
+    // if (type === "我的收藏") {
+    //   libraryItemType = "收藏"
+    // }
+    // if (type === "我的错题") {
+    //   libraryItemType = "错题"
+    // }
     wx.navigateTo({
-      url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + libraryItemType,
+      url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + type,
+    })
+  },
+
+  closePopup: function() {
+    this.setData({
+      showChoiceBox: false,
+      show: false,
+    })
+  },
+
+  setGroups: function() {
+    const lib = this.data.lib;
+    const groups = lib.groups.map((item) => {
+      return {
+        name: item.name,
+        count: lib.subjects.filter(s => s.groupId === item.id).length,
+        id:item.id
+      }
+    });
+    this.setData({
+      groups: groups
     })
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {},
+  onLoad: function(options) {
+    // var currentData = util.formatTime(new Date());
+    // console.log(currentData)
+  },
 
   /**
    * 生命周期函数--监听页面显示
@@ -134,17 +160,20 @@ Page({
       index: curIndex
     });
 
-    console.log(libIndex)
     this.setData({
       collectedSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].collections),
       wrongSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects),
       lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex],
     })
+    this.setGroups();
     start_num = libIndex === undefined ? 0 : (globalData.librarys[libIndex].answeredSubjects === undefined ? 0 : globalData.librarys[libIndex].answeredSubjects.length)
     end_num = libIndex === undefined ? 0 : globalData.librarys[libIndex].subjects.length;
     if (end_num != 0) {
       this.canvas()
     }
-  }
+  },
+
+
+  
 
 })

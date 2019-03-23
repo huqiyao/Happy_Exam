@@ -13,20 +13,19 @@
           <view class='detail-item special-one' wx:for='{{lib[libIndex].groups}}' wx:for-item="groupItem">
             <span class='type-name'>{{groupItem.name}}</span>
             <view class='complete-bar'>
-              <view class='right-num'>{{groupItem.answeredCount===undefined?0:(groupItem.answeredCount-groupItem.wrongCount)}}</view>
-              <view class='wrong-num'>{{groupItem.wrongCount===undefined?0:groupItem.wrongCount}}</view>
-              <view class='uncomplete-num'>{{groupItem.answeredCount===undefined?groupItem.totalCount:(groupItem.totalCount-groupItem.answeredCount)}}</view>
+              <view class='right-num' style="width:{{100*(groupItem.answeredCount-groupItem.wrongCount)/groupItem.totalCount + '%'}}">{{groupItem.answeredCount-groupItem.wrongCount}}</view>
+              <view class='wrong-num' style="width:{{100*groupItem.wrongCount/groupItem.totalCount + '%'}}">{{groupItem.wrongCount}}</view>
+              <view class='uncomplete-num' style="width:{{100*(groupItem.totalCount-groupItem.answeredCount)/groupItem.totalCount + '%'}}">{{groupItem.totalCount-groupItem.answeredCount}}</view>
             </view>
             <span class='total-num'>{{groupItem.totalCount}}</span>
           </view>
           <view class='detail-item total-one'>
             <span class='type-name'>总计:</span>
             <view class='complete-bar'>
-              <!-- <view class='right-num'>{{lib[libIndex].answeredSubjects.length - lib[libIndex].wrongSubjects.length}}</view> -->
               <view class='right-num' style="width:{{100*((libItem.answeredSubjects === undefinded?0:libItem.answeredSubjects.length)-(libItem.wrongSubjects === undefinded?0:libItem.wrongSubjects.length))/libItem.subjects.length  + '%'}}">{{(libItem.answeredSubjects === undefinded?0:libItem.answeredSubjects.length)-(libItem.wrongSubjects === undefinded?0:libItem.wrongSubjects.length)}}</view>
               <!-- <view class='wrong-num'>{{lib[libIndex].wrongSubjects.length}}</view> -->
               <view class='wrong-num' style="width:{{100*(libItem.wrongSubjects === undefinded?0:libItem.wrongSubjects.length)/libItem.subjects.length  + '%'}}">{{libItem.wrongSubjects === undefinded?0:libItem.wrongSubjects.length}}</view>
-              <view class='uncomplete-num' style="width:{{100*(libItem.subjects.length-(libItem.wrongSubjects === undefinded?0:libItem.wrongSubjects.length))/libItem.subjects.length  + '%'}}">{{libItem.subjects.length-(libItem.answeredSubjects === undefinded?0:libItem.answeredSubjects.length)}}</view>
+              <view class='uncomplete-num' style="width:{{100*(libItem.subjects.length-(libItem.answeredSubjects === undefinded?0:libItem.answeredSubjects.length))/libItem.subjects.length  + '%'}}">{{libItem.subjects.length-(libItem.answeredSubjects === undefinded?0:libItem.answeredSubjects.length)}}</view>
             </view>
             <span class='total-num'>{{libItem.subjects.length}}</span>
           </view>
@@ -35,20 +34,21 @@
     </view>
     <view hidden="{{statistics!='progress'}}">
       <block>
-        <view class='progress-list'>
+        <view class='progress-list' wx:for="{{logArr}}" wx:for-item="logItem" wx:for-index="logIndex">
+          <view class='list-circle'></view>
+          <view class='list-content'>
+            <text class='content-time'>{{logIndex}}</text>
+            <view class='content-detail' wx:for="{{logArr[logIndex]}}" wx:for-item="DateItem">
+            <view>{{DateItem.exerciseType}}{{DateItem.answeredCount}}题，做对{{DateItem.rightCount}}题,用时{{DateItem.spendTime}}</view></view>
+          </view>
+        </view>
+        <!-- <view class='progress-list'>
           <view class='list-circle'></view>
           <view class='list-content'>
             <text class='content-time'>2019-3-5</text>
             <view class='content-detail'>随机练习37道，做对22道，用时45分钟</view>
           </view>
-        </view>
-        <view class='progress-list'>
-          <view class='list-circle'></view>
-          <view class='list-content'>
-            <text class='content-time'>2019-3-5</text>
-            <view class='content-detail'>随机练习37道，做对22道，用时45分钟</view>
-          </view>
-        </view>
+        </view> -->
       </block>
     </view>
     <view hidden="{{statistics!='achieve'}}">

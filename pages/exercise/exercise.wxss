@@ -14,20 +14,20 @@
 /* 顶部切换模式按钮 */
 
 .exercise-top {
-  background-color: pink;
+  background-color: blanchedalmond;
   width: 100%;
   height: 40px;
   padding: 20rpx;
 }
 
 .exercise-bottom {
-  background-color: pink;
+  background-color: blanchedalmond;
   width: 100%;
   height: 60px;
 }
 
 .change-content {
-  background-color: yellowgreen;
+  background-color: blanchedalmond;
   flex-grow: 1;
 }
 
@@ -77,7 +77,7 @@ swiper {
 }
 
 swiper-item {
-  background-color: blanchedalmond;
+  /* background-color: blanchedalmond; */
 }
 
 .main-content {
@@ -85,14 +85,15 @@ swiper-item {
 }
 
 .question {
-  margin-top: 15rpx;
+  margin: 15rpx 0 30rpx 0;
 }
 
 .question-type {
   background-color:white;
   border: 2rpx solid black;
+  border-radius: 10rpx;
   margin-right: 10rpx;
-  padding: 2rpx;
+  padding: 0 2rpx;
 }
 
 .question image {
@@ -128,7 +129,7 @@ swiper-item {
 }
 .option {
   /* height: 55rpx; */
-  background-color: pink;
+  /* background-color: pink; */
   margin-top: 10rpx;
 }
 
@@ -138,7 +139,7 @@ swiper-item {
   background-color: white;
   border: 1px solid gray;
   border-radius: 50%;
-  margin:  4rpx 10rpx;
+  margin:  4rpx 10rpx 4rpx 0;
   height: 40rpx;
   width: 40rpx;
   text-align: center;

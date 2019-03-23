@@ -1,4 +1,4 @@
-<view class='home-container'>
+<view class='home-container'  bindtap='closePopup'>
   <view class='home-top'>
     <text class='tiku'>题库：</text>
     <view class='select-box'>
@@ -20,7 +20,7 @@
     <view class='choice-item' bindtap='toExercise' data-type='{{exerciseType[0]}}'>
       <text>随机练习</text>
     </view>
-    <view class='choice-item' bindtap='showChoiceBox'>
+    <view class='choice-item' catchtap='showChoiceBox'>
       <text>专项练习</text>
     </view>
     <view class='choice-item' bindtap='toExercise' data-type='{{exerciseType[2]}}'>
@@ -32,11 +32,13 @@
   </view>
   <view class='genius-score'>学霸点：700（准学霸）</view>
   <!-- 专项练习选择框 -->
-  <view class='choose-box' style='position:absolute;background-color:pink;height:auto;width:60%;top:300rpx;left:20%;' hidden='{{!showChoiceBox}}'>
-    <view name="radio-group"  wx:for='{{lib.groups}}' wx:for-item='groupItem' >
-      <view style='border:1px solid black;text-align:center' bindtap='toExercise' data-id="{{groupItem.id}}" data-type='{{exerciseType[1]}}'>
-        <!-- <radio value="{{groupItem.id}}" /> -->
-        {{groupItem.name}}
+  <view class="popup-back"  hidden='{{!showChoiceBox}}'>
+    <view class='choose-box' catchtap='stopEvent'>
+      <view name="radio-group"  wx:for='{{groups}}' wx:for-item='groupItem' >
+        <view class="group-item-box" hover-class="group-item-box-hover" bindtap='toExercise' data-id="{{groupItem.id}}" data-type='{{exerciseType[1]}}' data-name='{{groupItem.name}}'>
+          <span>{{groupItem.name}}</span>
+          <span style="float: right">{{groupItem.count}}</span>
+        </view>
       </view>
     </view>
   </view>

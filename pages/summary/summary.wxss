@@ -75,6 +75,7 @@
   height: 55rpx;
   border: 1px solid gray;
   display: flex;
+  overflow: hidden;
 }
 
 .complete-bar>view {

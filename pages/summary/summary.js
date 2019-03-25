@@ -48,7 +48,8 @@ Page({
     var logArr = []
     this.setData({
       lib: globalData.librarys,
-      log: wx.getStorageSync('logs') || []
+      log: wx.getStorageSync('logs') || [],
+      reward: wx.getStorageSync('rewards') || []
     })
     console.log(this.data.log)
     var lib = this.data.lib

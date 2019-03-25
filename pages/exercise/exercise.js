@@ -1,34 +1,38 @@
 var app = getApp();
 var globalData = app.globalData;
 var util = require("../../utils/util.js");
-var collections
-var answeredSubjects
-var wrongSubjects
-var logs
-var currentLibrary
-var answeredCount = 0
-var rightCount = 0
+var collections //缓存中的收藏题
+var answeredSubjects //缓存中的已答题
+var wrongSubjects //缓存中的错题
+var logs //缓存中每天做题记录
+var currentLibrary //当前题库
+var answeredCount = 0 //当前页已经回答过的数量
+var rightCount = 0 //当前页已经答对的数量
+var consistentRight = [] //记录当前页连续作对的题
 var startRememberNum = 0
 var endRememberNum = 0
 var rememberCount = 0
 var exerciseSpendTime = 0
 var rememberSpendTime = 0
 var startExerciseTime, startRememberTime, endExerciseTime, endRememberTime
+var reward = []
+var rewards = wx.getStorageSync('rewards') || []
 Page({
   /**
    * 页面的初始数据
    */
   data: {
     isExerciseMode: true, //预设当前项的值
+    showRewardBox: false,
     settingItems: [{
-        name: 'autoSwitch',
-        value: '答对自动切题'
-      },
-      {
-        name: 'filterDislike',
-        value: '过滤被屏蔽的题目',
-        checked: 'true'
-      },
+      name: 'autoSwitch',
+      value: '答对自动切题'
+    },
+    {
+      name: 'filterDislike',
+      value: '过滤被屏蔽的题目',
+      checked: 'true'
+    },
     ],
 
     // isCollected: false,
@@ -51,9 +55,8 @@ Page({
   /**
    * 收藏题目
    */
-  clickCollect: function(e) {
+  clickCollect: function (e) {
     currentLibrary = this.data.currentLibrary
-    // libIndex = common.getLibIndex()
     var that = this
     var collection;
     var subjectIndex = e.currentTarget.dataset.index
@@ -160,38 +163,38 @@ Page({
     // globalData.collectedSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
   },
 
-  clickDislike: function(e) {
+  clickDislike: function (e) {
     this.setData({
       isDislike: !this.data.isDislike,
     })
   },
 
-  clickNote: function(e) {
+  clickNote: function (e) {
     this.setData({
       isShowNotePanel: !this.data.isShowNotePanel,
       isShowSettingPanel: false,
     })
   },
 
-  clickSetting: function(e) {
+  clickSetting: function (e) {
     this.setData({
       isShowNotePanel: false,
       isShowSettingPanel: !this.data.isShowSettingPanel,
     })
   },
 
-  clickInPopupPanel: function(e) {
+  clickInPopupPanel: function (e) {
 
   },
 
-  clearPopup: function(e) {
+  clearPopup: function (e) {
     this.setData({
       isShowNotePanel: false,
       isShowSettingPanel: false,
     })
   },
 
-  changeSwiper: function(e) {
+  changeSwiper: function (e) {
     this.setData({
       swiperCurrent: e.detail.current,
     })
@@ -202,7 +205,7 @@ Page({
   /**
    * 判断所选答案是否正确 
    */
-  confirmAnswer: function(e) {
+  confirmAnswer: function (e) {
     currentLibrary = this.data.currentLibrary
     var answeredSubject
     var wrongSubject
@@ -229,33 +232,98 @@ Page({
 
       answeredCount++;
 
-      if (currentLibrary.answeredSubjects === undefined) {
-        answeredSubject.push(subjectSelected)
-        currentLibrary.answeredSubjects = answeredSubject
-      } else {
-        for (var i = 0; i < currentLibrary.answeredSubjects.length; i++) {
-          console.log(i)
-          if (subjectSelected.id === currentLibrary.answeredSubjects[i].id) {
-            break
-          }
-        }
-        if (i === currentLibrary.answeredSubjects.length) {
-          answeredSubject.push(subjectSelected)
-          currentLibrary.answeredSubjects = answeredSubject
-        }
-      }
-
       // 回答正确
       // 答对自动切换到下一题
       var swiperCurrent = this.data.swiperCurrent;
       if (resultObject.isRight) {
         rightCount++;
+        console.log("做对了：")
+        console.log(rightCount)
+        console.log("判断条件")
+        var isInIt = false
+        if (currentLibrary.answeredSubjects != undefined) {
+          currentLibrary.answeredSubjects.forEach((item, index) => {
+            if (item.id === subjectSelected.id) {
+              isInIt = true
+            }
+          })
+        }
+        console.log(currentLibrary.answeredSubjects === undefined)
+        console.log(isInIt)
+        if (currentLibrary.answeredSubjects === undefined || isInIt === false) {
+          consistentRight.push(subjectSelected)
+          console.log("持续做对：")
+          console.log(consistentRight.length)
+          if (consistentRight.length === 20) {
+            var achieveCount
+            var count
+            if (rewards == false) {    //rewards===[]这种方法是错的
+              count = 1
+              achieveCount = []
+            }
+            else {
+              for (var i = 0; i < rewards.length; i++) {
+                if (rewards[i].name === "20连杀") {
+                  count = rewards[i].count[rewards[i].count.length-1] + 1;
+                  achieveCount = rewards[i].count
+                  break;
+                }
+                if (i === rewards.length) {
+                  achieveCount = []
+                  count = 1
+                }
+              }
+            }
+
+            // var count = rewards == false ? 1 :2
+            // rewards.forEach((item, index) => {
+            //   if (item.name === "20连杀") {
+            //     return item.count + 1
+            //   }
+            //   if (index === rewards.length-1) {
+            //     return 1
+            //   }
+            // })
+
+            console.log("count是什么")
+            console.log(count)
+            achieveCount.push(count)
+            this.setData({
+              showRewardBox: true,
+              twentyBeat: true,
+            })
+            var twentyBeatRecord = {
+              name: "20连杀",
+              disc:"连续做对20题则达成一次，要求是从未做过的题目，改成就可无限叠加，达成一次积攒300学霸点",
+              count: achieveCount
+            }
+            reward.push(twentyBeatRecord)
+            console.log(reward)
+            if(rewards == false){
+              rewards = reward
+            }else{
+              for(var i = 0; i < rewards.length;i++){
+                if(rewards[i].name === "20连杀"){
+                  rewards[i] = twentyBeatRecord
+                  break;
+                }if(i===rewards.length){
+                  rewards.push(twentyBeatRecord)
+                }
+              }
+            }
+            reward = []
+            wx.setStorageSync('rewards', rewards)
+            consistentRight = []
+          }
+        }
 
         console.log(swiperCurrent);
         swiperCurrent = swiperCurrent < (this.data.subject.length - 1) ? swiperCurrent + 1 : 0;
       }
       // 回答错误
       if (resultObject.isRight === false) {
+        consistentRight = []
+        console.log(consistentRight)
         if (currentLibrary.wrongSubjects === undefined) {
           wrongSubject.push(subjectSelected)
           currentLibrary.wrongSubjects = wrongSubject
@@ -272,6 +340,22 @@ Page({
 
         }
       }
+      // 添加到answeredSubjects中
+      if (currentLibrary.answeredSubjects === undefined) {
+        answeredSubject.push(subjectSelected)
+        currentLibrary.answeredSubjects = answeredSubject
+      } else {
+        for (var i = 0; i < currentLibrary.answeredSubjects.length; i++) {
+          console.log(i)
+          if (subjectSelected.id === currentLibrary.answeredSubjects[i].id) {
+            break
+          }
+        }
+        if (i === currentLibrary.answeredSubjects.length) {
+          answeredSubject.push(subjectSelected)
+          currentLibrary.answeredSubjects = answeredSubject
+        }
+      }
       wx.setStorageSync('librarys', globalData.librarys);
       this.setData({
         answeredCount: answeredCount,
@@ -282,7 +366,7 @@ Page({
           if (resultObject.isRight) {
             if (index === choise) {
               answer.showRight = true;
-            } else {}
+            } else { }
           } else {
             if (index === result) {
               answer.showRight = true;
@@ -302,14 +386,21 @@ Page({
     console.log(this.data.subject[subjectIndex].userSelectState)
   },
 
-  confirmAnswer2: function(e) {
+  confirmAnswer2: function (e) {
 
   },
-
+  /**
+   * 关闭成就弹出框
+   */
+  closeRewardBox: function () {
+    this.setData({
+      showRewardBox: false
+    })
+  },
   /**
    * 点击按钮切换答题/背题模式
    */
-  switchExerciseNav: function(e) {
+  switchExerciseNav: function (e) {
     // this.setData({
     //   currentTab: e.target.dataset.current //current来源于data-current
     // })
@@ -322,16 +413,16 @@ Page({
     endRememberTime = startExerciseTime
     rememberSpendTime = rememberSpendTime + (endRememberTime - startRememberTime)
   },
-  switchRememberNav: function(e) {
+  switchRememberNav: function (e) {
     this.setData({
       isExerciseMode: false
     })
     startRememberNum = this.data.swiperCurrent
     startRememberTime = new Date()
     endExerciseTime = startRememberTime
-    exerciseSpendTime = exerciseSpendTime+(endExerciseTime - startExerciseTime)
+    exerciseSpendTime = exerciseSpendTime + (endExerciseTime - startExerciseTime)
   },
-  imageLoad: function(e) {
+  imageLoad: function (e) {
     var width = e.detail.width; //获取图片真实宽度
     var height = e.detail.height;
     var viewHeight, viewWidth;
@@ -354,7 +445,7 @@ Page({
     })
   },
 
-  previewImage: function(event) {
+  previewImage: function (event) {
     var index = event.currentTarget.dataset.index; //获取data-src
     var imgList = event.currentTarget.dataset.list; //获取data-list
     //图片预览
@@ -367,8 +458,10 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {
+  onLoad: function (options) {
     var that = this;
+    // console.log(rewards)
+    // console.log(wx.getStorageSync('rewards')===undefined)
     // var selectedGroupId
     that.setData({
       currentLibraryId: options.currentLibraryId,
@@ -386,14 +479,14 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function() {
+  onReady: function () {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function() {
+  onShow: function () {
     // 记录进入刷题页的时间
     var startDate = util.formatTime(new Date()).split(" ")[0];
     startExerciseTime = new Date()
@@ -403,7 +496,8 @@ Page({
     this.setData({
       currentLibrary: currentLibrary,
       startDate: startDate,
-      logs: (wx.getStorageSync('logs') || []) === undefined ? [] : (wx.getStorageSync('logs') || [])
+      // logs: (wx.getStorageSync('logs') || []) === undefined ? [] : (wx.getStorageSync('logs') || [])
+      logs: wx.getStorageSync('logs') || []
     })
     console.log(currentLibrary)
     console.log(this.data.startDate)
@@ -450,7 +544,7 @@ Page({
     var that = this;
     var obj = wx.createSelectorQuery();
     obj.select('.change-content').boundingClientRect();
-    obj.exec(function(rect) {
+    obj.exec(function (rect) {
       that.setData({
         scrollHeight: rect[0].height
       })
@@ -460,68 +554,69 @@ Page({
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function() {
+  onHide: function () {
 
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function() {
+  onUnload: function () {
     endExerciseTime = new Date();
     endRememberTime = endExerciseTime
-    if(!this.data.isExerciseMode){
+    if (!this.data.isExerciseMode) {
       // 背题数量
       endRememberNum = this.data.swiperCurrent
       rememberCount = rememberCount + (endRememberNum - startRememberNum)
       console.log(rememberCount)
       // 背题时间
       rememberSpendTime = rememberSpendTime + (endRememberTime - startRememberTime)
-    }
-    else{
+    } else {
       // 刷题时间
       exerciseSpendTime = exerciseSpendTime + (endExerciseTime - startExerciseTime)
     }
-    rememberSpendTime = parseInt(rememberSpendTime)/1000
+    rememberSpendTime = parseInt(rememberSpendTime) / 1000
     exerciseSpendTime = parseInt(exerciseSpendTime) / 1000
     // 记录此次刷题各种数据
-    var log = (wx.getStorageSync('logs') || []) === undefined ? [] : (wx.getStorageSync('logs') || [])
+    var log = wx.getStorageSync('logs') || []
     // var endDate = util.formatTime(new Date()).split(" ")[0];
     // var difference = parseInt(endTime - this.data.startTime)/1000
     // var spendTime = difference < 60 ? difference.toFixed(0) + "秒" : (difference / 60).toFixed(0) + "分钟"
     // console.log(spendTime)
     var thisRecord = {
-      startDate:this.data.startDate,
+      startDate: this.data.startDate,
       exerciseSpendTime: exerciseSpendTime < 60 ? exerciseSpendTime.toFixed(0) + "秒" : (exerciseSpendTime / 60).toFixed(0) + "分钟",
       rememberSpendTime: rememberSpendTime < 60 ? rememberSpendTime.toFixed(0) + "秒" : (rememberSpendTime / 60).toFixed(0) + "分钟",
-      answeredCount:answeredCount,
-      rightCount:rightCount,
-      exerciseType:this.data.libraryItem,
+      answeredCount: answeredCount,
+      rightCount: rightCount,
+      exerciseType: this.data.libraryItem,
       selectedGroupName: this.data.selectedGroupName,
-      rememberCount:rememberCount
+      rememberCount: rememberCount
     }
+    rightCount = 0
+    answeredCount = 0
     log.push(thisRecord)
-    wx.setStorageSync('logs',log)
+    wx.setStorageSync('logs', log)
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function() {
+  onPullDownRefresh: function () {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function() {
+  onReachBottom: function () {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function() {
+  onShareAppMessage: function () {
 
   },
 })

@@ -112,7 +112,7 @@
     <view class='reward-content' hidden='true'>恭喜达成百题斩成就，获得100学霸点</view>
     <view class='reward-content' hidden='true'>恭喜达成7日奋战成就，获得50学霸点</view>
     <view class='reward-content' hidden='{{!twentyBeat===true}}'>恭喜达成20连杀成就，获得300学霸点</view>
-    <view class='reward-content' hidden='true'>恭喜达成通关成就，获得{{}}学霸点</view>
+    <view class='reward-content' hidden='{{!passThisLib}}'>恭喜达成通关成就，获得{{}}学霸点</view>
     <view class='reward-btn'>
       <view>去炫耀</view>
       <view bindtap='closeRewardBox'>关闭</view>

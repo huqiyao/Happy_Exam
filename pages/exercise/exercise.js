@@ -254,17 +254,16 @@ Page({
           consistentRight.push(subjectSelected)
           console.log("持续做对：")
           console.log(consistentRight.length)
-          if (consistentRight.length === 20) {
+          if (consistentRight.length === 10) {
             var achieveCount
             var count
-            if (rewards == false) {    //rewards===[]这种方法是错的
+            if (rewards == false) { //rewards===[]这种方法是错的
               count = 1
               achieveCount = []
-            }
-            else {
+            } else {
               for (var i = 0; i < rewards.length; i++) {
                 if (rewards[i].name === "20连杀") {
-                  count = rewards[i].count[rewards[i].count.length-1] + 1;
+                  count = rewards[i].count[rewards[i].count.length - 1] + 1;
                   achieveCount = rewards[i].count
                   break;
                 }
@@ -274,17 +273,6 @@ Page({
                 }
               }
             }
-
-            // var count = rewards == false ? 1 :2
-            // rewards.forEach((item, index) => {
-            //   if (item.name === "20连杀") {
-            //     return item.count + 1
-            //   }
-            //   if (index === rewards.length-1) {
-            //     return 1
-            //   }
-            // })
-
             console.log("count是什么")
             console.log(count)
             achieveCount.push(count)
@@ -294,19 +282,20 @@ Page({
             })
             var twentyBeatRecord = {
               name: "20连杀",
-              disc:"连续做对20题则达成一次，要求是从未做过的题目，改成就可无限叠加，达成一次积攒300学霸点",
-              count: achieveCount
+              disc: "连续做对20题则达成一次，要求是从未做过的题目，改成就可无限叠加，达成一次积攒300学霸点",
+              starCount: achieveCount
             }
             reward.push(twentyBeatRecord)
             console.log(reward)
-            if(rewards == false){
+            if (rewards == false) {
               rewards = reward
-            }else{
-              for(var i = 0; i < rewards.length;i++){
-                if(rewards[i].name === "20连杀"){
+            } else {
+              for (var i = 0; i < rewards.length; i++) {
+                if (rewards[i].name === "20连杀") {
                   rewards[i] = twentyBeatRecord
                   break;
-                }if(i===rewards.length){
+                }
+                if (i === rewards.length) {
                   rewards.push(twentyBeatRecord)
                 }
               }
@@ -316,7 +305,6 @@ Page({
             consistentRight = []
           }
         }
-
         console.log(swiperCurrent);
         swiperCurrent = swiperCurrent < (this.data.subject.length - 1) ? swiperCurrent + 1 : 0;
       }
@@ -355,6 +343,49 @@ Page({
           answeredSubject.push(subjectSelected)
           currentLibrary.answeredSubjects = answeredSubject
         }
+      }
+      if (currentLibrary.answeredSubjects.length === currentLibrary.subjects.length) {
+        this.setData({
+          passThisLib: true,
+          showRewardBox: true
+        })
+        var libIdList
+        if(rewards == false){
+          libIdList = []
+        }else{
+          for(var i = 0; i<rewards.length;i++){
+            if(rewards[i].name === "通关"){
+              libIdList = rewards[i].libId
+              break
+            }
+            if(i === rewards.length){
+              libIdList = []
+            }
+          }
+        }
+        libIdList.push(this.data.currentLibraryId)
+        var passThisLibRecord = {
+          name:"通关",
+          disc:"将一个题库中的题目全部做完，则达成一次，根据其中的题目数量计算学学霸点，2道题可积攒1学霸点",
+          starCount: libIdList
+        }
+        reward.push(passThisLibRecord)
+        console.log(reward)
+        if (rewards == false) {
+          rewards = reward
+        } else {
+          for (var i = 0; i < rewards.length; i++) {
+            if (rewards[i].name === "通关") {
+              rewards[i] = passThisLibRecord
+              break;
+            }
+            if (i === rewards.length) {
+              rewards.push(passThisLibRecord)
+            }
+          }
+        }
+        reward = []
+        wx.setStorageSync('rewards', rewards)
       }
       wx.setStorageSync('librarys', globalData.librarys);
       this.setData({

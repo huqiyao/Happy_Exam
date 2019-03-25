@@ -56,7 +56,7 @@
           <view class='achieve-desc'>{{rewardItem.disc}}</view>
           <view class='achieve-result'>
             <text>达成：</text>
-            <image src='http://wximg.youtasc.com/f_star.png' wx:for="{{rewardItem.count}}"></image>
+            <image src='http://wximg.youtasc.com/f_star.png' wx:for="{{rewardItem.starCount}}"></image>
           </view>
         </view>
         <!-- <view class='achieve-item'>

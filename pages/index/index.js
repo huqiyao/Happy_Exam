@@ -8,7 +8,6 @@ var sAngle = 1.5 * Math.PI,
   eAngle = 0;
 var start_num = null,
   end_num = null
-var libIndex = util.getLibIndex()
 var type
 Page({
   data: {
@@ -58,18 +57,20 @@ Page({
   optionTap: function(e) {
     let Index = e.currentTarget.dataset.index; //获取点击的下拉列表的下标
     globalData.currentLibraryId = globalData.librarys[Index].id;
-    libIndex = util.getLibIndex()
+    // libIndex = util.getLibIndex()
     this.setData({
       index: Index,
       show: !this.data.show,
-      collectedSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].collections),
-      wrongSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects),
-      lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex],
+      // collectedSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].collections),
+      // wrongSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects),
+      // lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex],
+      collectedSubjects: globalData.librarys[Index].collections === undefined ? [] : globalData.librarys[Index].collections,
+      wrongSubjects: globalData.librarys[Index].wrongSubjects === undefined ? [] : globalData.librarys[Index].wrongSubjects,
+      lib: globalData.librarys[Index],
     });
     this.setGroups();
-    start_num = globalData.librarys[libIndex].answeredSubjects === undefined ? 0 : globalData.librarys[libIndex].answeredSubjects.length;
-    end_num = globalData.librarys[libIndex].subjects.length;
-    // var that = this;
+    start_num = globalData.librarys[Index].answeredSubjects === undefined ? 0 : globalData.librarys[Index].answeredSubjects.length;
+    end_num = globalData.librarys[Index].subjects.length;
     this.canvas()
     console.log(this.data.lib)
   },
@@ -99,16 +100,6 @@ Page({
         showChoiceBox: false
       })
     }
-    // 随机练习、我的收藏、我的错题的情况
-    // if (type === "随机练习") {
-    //   libraryItemType = "随机"
-    // }
-    // if (type === "我的收藏") {
-    //   libraryItemType = "收藏"
-    // }
-    // if (type === "我的错题") {
-    //   libraryItemType = "错题"
-    // }
     wx.navigateTo({
       url: '/pages/exercise/exercise?currentLibraryId=' + globalData.currentLibraryId + "&libraryItemType=" + type,
     })
@@ -159,21 +150,17 @@ Page({
       selectData,
       index: curIndex
     });
-
+var libIndex = this.data.index
     this.setData({
-      collectedSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].collections === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].collections),
-      wrongSubjects: libIndex === undefined ? [] : ((wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex].wrongSubjects),
-      lib: libIndex === undefined ? [] : (wx.getStorageSync('librarys') || [])[libIndex],
+      collectedSubjects: globalData.librarys[libIndex].collections === undefined ? [] : globalData.librarys[libIndex].collections,
+      wrongSubjects: globalData.librarys[libIndex].wrongSubjects === undefined ? [] : globalData.librarys[libIndex].wrongSubjects,
+      lib: globalData.librarys[libIndex],
     })
     this.setGroups();
-    start_num = libIndex === undefined ? 0 : (globalData.librarys[libIndex].answeredSubjects === undefined ? 0 : globalData.librarys[libIndex].answeredSubjects.length)
-    end_num = libIndex === undefined ? 0 : globalData.librarys[libIndex].subjects.length;
+    start_num = globalData.librarys[libIndex].answeredSubjects === undefined ? 0 : globalData.librarys[libIndex].answeredSubjects.length
+    end_num = globalData.librarys[libIndex].subjects.length;
     if (end_num != 0) {
       this.canvas()
     }
   },
-
-
-  
-
 })

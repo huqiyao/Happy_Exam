@@ -22,20 +22,20 @@ const getOrderByIndex = index => {
   return String.fromCharCode(65 + index)
 }
 
-var app = getApp();
-function getLibIndex() {
-  if (app.globalData.librarys != undefined){
-    for (var i = 0; i < app.globalData.librarys.length; i++) {
-      if (app.globalData.currentLibraryId === app.globalData.librarys[i].id) {
-        return i
-      }
-    }
-  }
-  else return undefined
-}
+// var app = getApp();
+// function getLibIndex() {
+//   if (app.globalData.librarys != undefined){
+//     for (var i = 0; i < app.globalData.librarys.length; i++) {
+//       if (app.globalData.currentLibraryId === app.globalData.librarys[i].id) {
+//         return i
+//       }
+//     }
+//   }
+//   else return undefined
+// }
 
 module.exports = {
   formatTime: formatTime,
   parseLibrary: parseLibrary,
-  getLibIndex: getLibIndex
+  // getLibIndex: getLibIndex
 }

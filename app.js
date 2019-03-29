@@ -10,5 +10,7 @@ App({
     currentExerciseType:'',//练习的类型
     // wrongSubjectIds: [],                   // 答错的题目
     // collectedSubjectIds:[] ,               // 收藏的题目
+    consistantDayCount:0,
+    consistantDays:[]
   },
 })

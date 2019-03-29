@@ -17,6 +17,10 @@ var rememberSpendTime = 0
 var startExerciseTime, startRememberTime, endExerciseTime, endRememberTime
 var rewards = wx.getStorageSync('rewards') || []
 var totalRightCount = wx.getStorageSync('totalRightCount') || 0
+var consistencys = wx.getStorageSync('consistencys') || []
+var todayAnsweredCount = 0
+var consistentDays
+// var consistentDayCount
 Page({
   /**
    * 页面的初始数据
@@ -25,14 +29,14 @@ Page({
     isExerciseMode: true, //预设当前项的值
     showRewardBox: false,
     settingItems: [{
-        name: 'autoSwitch',
-        value: '答对自动切题'
-      },
-      {
-        name: 'filterDislike',
-        value: '过滤被屏蔽的题目',
-        checked: 'true'
-      },
+      name: 'autoSwitch',
+      value: '答对自动切题'
+    },
+    {
+      name: 'filterDislike',
+      value: '过滤被屏蔽的题目',
+      checked: 'true'
+    },
     ],
 
     // isCollected: false,
@@ -55,7 +59,7 @@ Page({
   /**
    * 收藏题目
    */
-  clickCollect: function(e) {
+  clickCollect: function (e) {
     currentLibrary = this.data.currentLibrary
     var that = this
     var collection;
@@ -162,49 +166,95 @@ Page({
     // globalData.collectedSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
   },
 
-  clickDislike: function(e) {
+  clickDislike: function (e) {
     this.setData({
       isDislike: !this.data.isDislike,
     })
   },
 
-  clickNote: function(e) {
+  clickNote: function (e) {
     this.setData({
       isShowNotePanel: !this.data.isShowNotePanel,
       isShowSettingPanel: false,
     })
   },
 
-  clickSetting: function(e) {
+  clickSetting: function (e) {
     this.setData({
       isShowNotePanel: false,
       isShowSettingPanel: !this.data.isShowSettingPanel,
     })
   },
 
-  clickInPopupPanel: function(e) {
+  clickInPopupPanel: function (e) {
 
   },
 
-  clearPopup: function(e) {
+  clearPopup: function (e) {
     this.setData({
       isShowNotePanel: false,
       isShowSettingPanel: false,
     })
   },
 
-  changeSwiper: function(e) {
+  changeSwiper: function (e) {
     this.setData({
       swiperCurrent: e.detail.current,
     })
     console.log(this.data.swiperCurrent)
   },
 
-
+  /**
+   * 公共方法：添加成就记录
+   */
+  addAchievement(name, disc) {
+    var reward = []
+    var countList
+    var count
+    if (rewards == false) { //rewards===[]这种方法是错的
+      count = 1
+      countList = []
+    } else {
+      for (var i = 0; i < rewards.length; i++) {
+        if (rewards[i].name === name) {
+          count = rewards[i].starCount[rewards[i].starCount.length - 1] + 1;
+          countList = rewards[i].starCount
+          break;
+        }
+      }
+      if (i === rewards.length) {
+        countList = []
+        count = 1
+      }
+    }
+    countList.push(count)
+    var thisRecord = {
+      name: name,
+      disc: disc,
+      starCount: countList
+    }
+    reward.push(thisRecord)
+    console.log(reward)
+    if (rewards == false) {
+      rewards = reward
+    } else {
+      for (var i = 0; i < rewards.length; i++) {
+        if (rewards[i].name === name) {
+          rewards[i] = thisRecord
+          break;
+        }
+      }
+      if (i === rewards.length) {
+        rewards.push(thisRecord)
+      }
+    }
+    reward = []
+    wx.setStorageSync('rewards', rewards)
+  },
   /**
    * 判断所选答案是否正确 
    */
-  confirmAnswer: function(e) {
+  confirmAnswer: function (e) {
     currentLibrary = this.data.currentLibrary
     var answeredSubject
     var wrongSubject
@@ -224,29 +274,15 @@ Page({
     }
     currentLibrary.answeredSubjects === undefined ? answeredSubject = [] : answeredSubject = currentLibrary.answeredSubjects
     currentLibrary.wrongSubjects === undefined ? wrongSubject = [] : wrongSubject = currentLibrary.wrongSubjects
-
-    // if (resultObject.isAnswered === true && lib[libIndex].subjects[subjectIndex].userSelectState === undefined && this.data.isExerciseMode) {
-
     if (resultObject.isAnswered === true && this.data.isExerciseMode) {
-
       answeredCount++;
-
       // 回答正确
       // 答对自动切换到下一题
       var swiperCurrent = this.data.swiperCurrent;
       if (resultObject.isRight) {
         rightCount++;
-        console.log("做对了：")
-        console.log(rightCount)
-        console.log("判断条件")
         var isInIt = false
         if (currentLibrary.answeredSubjects != undefined) {
-          // currentLibrary.answeredSubjects.forEach((item, index) => {
-          //   if (item.id === subjectSelected.id) {
-          //     isInIt = true
-          //     // break;
-          //   }
-          // })
           for (var i = 0; i < currentLibrary.answeredSubjects.length; i++) {
             if (currentLibrary.answeredSubjects[i].id === subjectSelected.id) {
               isInIt = true
@@ -255,8 +291,6 @@ Page({
           }
           if (i === currentLibrary.answeredSubjects.length) {
             totalRightCount++
-            console.log("在没有回答过中：")
-            console.log(totalRightCount)
           }
           if (currentLibrary.wrongSubjects != undefined) {
             currentLibrary.wrongSubjects.forEach((item, index) => {
@@ -269,57 +303,16 @@ Page({
           totalRightCount++
         }
         wx.setStorageSync("totalRightCount", totalRightCount)
-        if (totalRightCount === 3){
-          var hundredBeatReward = []
-          var hundredCountList
-          var hundredCount
-          if (rewards == false) { //rewards===[]这种方法是错的
-            hundredCount = 1
-            hundredCountList = []
-          } else {
-            for (var i = 0; i < rewards.length; i++) {
-              if (rewards[i].name === "百题斩") {
-                hundredCount = rewards[i].starCount[rewards[i].starCount.length - 1] + 1;
-                hundredCountList = rewards[i].starCount
-                break;
-              }
-            }
-            if (i === rewards.length) {
-              hundredCountList = []
-              hundredCount = 1
-            }
-          }
-          hundredCountList.push(hundredCount)
+        // 百题斩成就
+        if (totalRightCount === 100) {
           this.setData({
             showRewardBox: true,
             hundredBeat: true,
           })
-          var hundredBeatRecord = {
-            name: "百题斩",
-            disc: "正确回答100道题即可达成一次，200道题则达成2次，达成一次积攒100学霸点",
-            starCount: hundredCountList
-          }
-          hundredBeatReward.push(hundredBeatRecord)
-          console.log(hundredBeatReward)
-          if (rewards == false) {
-            rewards = hundredBeatReward
-          } else {
-            for (var i = 0; i < rewards.length; i++) {
-              if (rewards[i].name === "百题斩") {
-                rewards[i] = hundredBeatRecord
-                break;
-              }
-            }
-            if (i === rewards.length) {
-              rewards.push(hundredBeatRecord)
-            }
-          }
-          hundredBeatRecord = []
+          this.addAchievement("百题斩", "正确回答100道题即可达成一次，200道题则达成2次，达成一次积攒100学霸点")
           totalRightCount = 0
-          wx.setStorageSync('rewards', rewards)
         }
         // 20连杀成就
-        var reward = []
         console.log(currentLibrary.answeredSubjects === undefined)
         console.log(isInIt)
         if (currentLibrary.answeredSubjects === undefined || isInIt === false) {
@@ -327,55 +320,12 @@ Page({
           console.log("持续做对：")
           console.log(consistentRight.length)
           if (consistentRight.length === 20) {
-            var achieveCount
-            var count
-            if (rewards == false) { //rewards===[]这种方法是错的
-              count = 1
-              achieveCount = []
-            } else {
-              for (var i = 0; i < rewards.length; i++) {
-                if (rewards[i].name === "20连杀") {
-                  count = rewards[i].starCount[rewards[i].starCount.length - 1] + 1;
-                  achieveCount = rewards[i].starCount
-                  break;
-                }
-              }
-              if (i === rewards.length) {
-                achieveCount = []
-                count = 1
-              }
-            }
-            achieveCount.push(count)
             this.setData({
               showRewardBox: true,
               twentyBeat: true,
             })
-            var twentyBeatRecord = {
-              name: "20连杀",
-              disc: "连续做对20题则达成一次，要求是从未做过的题目，改成就可无限叠加，达成一次积攒300学霸点",
-              starCount: achieveCount
-            }
-            reward.push(twentyBeatRecord)
-            console.log(reward)
-            if (rewards == false) {
-              rewards = reward
-            } else {
-              for (var i = 0; i < rewards.length; i++) {
-                if (rewards[i].name === "20连杀") {
-                  rewards[i] = twentyBeatRecord
-                  break;
-                }
-              }
-              if (i === rewards.length) {
-                rewards.push(twentyBeatRecord)
-              }
-            }
-            reward = []
+            this.addAchievement("20连杀", "连续做对20题则达成一次，要求是从未做过的题目，改成就可无限叠加，达成一次积攒300学霸点")
             consistentRight = []
-            // this.setData({
-            //   twentyBeat:false
-            // })
-            wx.setStorageSync('rewards', rewards)
           }
         }
         console.log(swiperCurrent);
@@ -436,15 +386,13 @@ Page({
           }
         })
       }
-      console.log("isPassed:")
-      console.log(isPassed)
       if (isPassed === false) {
         if (currentLibrary.answeredSubjects.length === currentLibrary.subjects.length) {
-          var passReward = []
           this.setData({
             passThisLib: true,
             showRewardBox: true
           })
+          var passReward = []
           var libIdList = []
           if (rewards == false) {
             libIdList = []
@@ -481,11 +429,9 @@ Page({
           }
           wx.setStorageSync("rewards", rewards) //如果省去出错，因为没出现过对缓存的存储操作
           passReward = []
-          // this.setData({
-          //   passThisLib: false
-          // })
         }
       }
+      wx.setStorageSync("librarys", globalData.librarys)
       console.log("写入缓存时")
       console.log(globalData.librarys)
       this.setData({
@@ -497,7 +443,7 @@ Page({
           if (resultObject.isRight) {
             if (index === choise) {
               answer.showRight = true;
-            } else {}
+            } else { }
           } else {
             if (index === result) {
               answer.showRight = true;
@@ -510,33 +456,26 @@ Page({
         swiperCurrent: swiperCurrent,
       });
     }
-    console.log("已经做过的题：")
-    console.log(this.data.answeredCount)
-    console.log("作对的题：")
-    console.log(this.data.rightCount)
-    console.log(this.data.subject[subjectIndex].userSelectState)
   },
-  confirmAnswer2: function(e) {
+  confirmAnswer2: function (e) {
 
   },
   /**
    * 关闭成就弹出框
    */
-  closeRewardBox: function() {
+  closeRewardBox: function () {
     this.setData({
       showRewardBox: false,
       passThisLib: false,
       twentyBeat: false,
-      hundredBeat:false
+      hundredBeat: false,
+      sevenDaysConsistency: false
     })
   },
   /**
    * 点击按钮切换答题/背题模式
    */
-  switchExerciseNav: function(e) {
-    // this.setData({
-    //   currentTab: e.target.dataset.current //current来源于data-current
-    // })
+  switchExerciseNav: function (e) {
     this.setData({
       isExerciseMode: true,
     })
@@ -546,7 +485,7 @@ Page({
     endRememberTime = startExerciseTime
     rememberSpendTime = rememberSpendTime + (endRememberTime - startRememberTime)
   },
-  switchRememberNav: function(e) {
+  switchRememberNav: function (e) {
     this.setData({
       isExerciseMode: false
     })
@@ -555,7 +494,7 @@ Page({
     endExerciseTime = startRememberTime
     exerciseSpendTime = exerciseSpendTime + (endExerciseTime - startExerciseTime)
   },
-  imageLoad: function(e) {
+  imageLoad: function (e) {
     var width = e.detail.width; //获取图片真实宽度
     var height = e.detail.height;
     var viewHeight, viewWidth;
@@ -578,7 +517,7 @@ Page({
     })
   },
 
-  previewImage: function(event) {
+  previewImage: function (event) {
     var index = event.currentTarget.dataset.index; //获取data-src
     var imgList = event.currentTarget.dataset.list; //获取data-list
     //图片预览
@@ -591,16 +530,12 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {
+  onLoad: function (options) {
     var that = this;
-    // console.log(rewards)
-    // console.log(wx.getStorageSync('rewards')===undefined)
-    // var selectedGroupId
     that.setData({
       currentLibraryId: options.currentLibraryId,
       libraryItem: options.libraryItemType,
     })
-    // console.log(libraryItem)
     if (this.data.libraryItem === '专项练习') {
       that.setData({
         selectedGroupId: options.selectedGroupId,
@@ -612,23 +547,24 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function() {
+  onReady: function () {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function() {
+  onShow: function () {
     // 记录进入刷题页的时间
     var startDate = util.formatTime(new Date()).split(" ")[0];
-    startExerciseTime = new Date()
-    // var startTime = util.formatTime(new Date()).split(" ")[1];
+    var startTime = new Date()
+    startExerciseTime = startTime
     // allen 这subject的值使用全局里面的数据
     const currentLibrary = globalData.librarys.find(item => item.id === globalData.currentLibraryId);
     this.setData({
       currentLibrary: currentLibrary,
       startDate: startDate,
+      startTime: startTime,
       // logs: (wx.getStorageSync('logs') || []) === undefined ? [] : (wx.getStorageSync('logs') || [])
       logs: wx.getStorageSync('logs') || []
     })
@@ -677,7 +613,7 @@ Page({
     var that = this;
     var obj = wx.createSelectorQuery();
     obj.select('.change-content').boundingClientRect();
-    obj.exec(function(rect) {
+    obj.exec(function (rect) {
       that.setData({
         scrollHeight: rect[0].height
       })
@@ -687,14 +623,28 @@ Page({
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function() {
+  onHide: function () {
 
   },
-
+  /**
+   * 公共方法：获取年、月、日、当前月有几天
+   */
+  getTimeDetail(time) {
+    var todayYear = time.getFullYear()
+    var todayMonth = time.getMonth() + 1
+    var todayDate = time.getDate()
+    var maxDay = (new Date(todayYear, todayMonth, 0)).getDate()
+    return {
+      todayYear: todayYear,
+      todayMonth: todayMonth,
+      todayDate: todayDate,
+      maxDay: maxDay
+    }
+  },
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function() {
+  onUnload: function () {
     endExerciseTime = new Date();
     endRememberTime = endExerciseTime
     if (!this.data.isExerciseMode) {
@@ -712,10 +662,6 @@ Page({
     exerciseSpendTime = parseInt(exerciseSpendTime) / 1000
     // 记录此次刷题各种数据
     var log = wx.getStorageSync('logs') || []
-    // var endDate = util.formatTime(new Date()).split(" ")[0];
-    // var difference = parseInt(endTime - this.data.startTime)/1000
-    // var spendTime = difference < 60 ? difference.toFixed(0) + "秒" : (difference / 60).toFixed(0) + "分钟"
-    // console.log(spendTime)
     var thisRecord = {
       startDate: this.data.startDate,
       exerciseSpendTime: exerciseSpendTime < 60 ? exerciseSpendTime.toFixed(0) + "秒" : (exerciseSpendTime / 60).toFixed(0) + "分钟",
@@ -730,26 +676,76 @@ Page({
     answeredCount = 0
     log.push(thisRecord)
     wx.setStorageSync('logs', log)
+
+    // 7天奋战
+    var consistency = consistencys
+    var isConsistent = false
+    var todayRecord = (wx.getStorageSync('logs') || []).filter(item => item.startDate === this.data.startDate)
+    todayRecord.forEach((item, index) => {
+      todayAnsweredCount = todayAnsweredCount + item.answeredCount
+    });
+    console.log("今天答题题数")
+    console.log(todayAnsweredCount)
+    if (todayAnsweredCount >= 10) {
+      if (consistencys == false) {
+        // consistencys.consistentDayCount = 1
+        consistency.push(this.data.startTime)
+        consistencys = consistency
+      } else {
+        // if (util.formatTime(this.data.startTime).split(" ")[0])
+        for (var i = 0; i < consistencys.length; i++) {
+          if (util.formatTime(this.data.startTime).split(" ")[0] === util.formatTime(consistencys[i]).split(" ")[0]) {
+            break;
+          }
+        }
+        if (i === consistencys.length) {
+          var lastExerciseDate = consistencys[consistencys.length - 1]
+          // 三种今天与上一次练习时间连续的情况
+          var caseOne = this.getTimeDetail(lastExerciseDate).todayYear === this.getTimeDetail(this.data.startTime).todayYear && this.getTimeDetail(lastExerciseDate).todayMonth === this.getTimeDetail(this.data.startTime).todayMonth && this.getTimeDetail(lastExerciseDate).todayDate === this.getTimeDetail(this.data.startTime).todayDate - 1
+          var caseTwo = this.getTimeDetail(lastExerciseDate).todayYear === this.getTimeDetail(this.data.startTime).todayYear && this.getTimeDetail(lastExerciseDate).todayMonth === this.getTimeDetail(this.data.startTime).todayMonth - 1 && this.getTimeDetail(lastExerciseDate).todayDate === this.getTimeDetail(lastExerciseDate).maxDay && this.getTimeDetail(this.data.startTime).todayDate === 1
+          var caseThree = this.getTimeDetail(lastExerciseDate).todayYear === this.getTimeDetail(this.data.startTime).todayYear - 1 && this.getTimeDetail(lastExerciseDate).todayMonth === 12 && this.getTimeDetail(this.data.startTime).todayMonth === 1 && this.getTimeDetail(lastExerciseDate).todayDate === this.getTimeDetail(lastExerciseDate).maxDay && this.getTimeDetail(this.data.startTime).todayDate === 1
+          if (caseOne || caseTwo || caseThree) {
+            isConsistent = true;
+          }
+          if (isConsistent) {
+            // consistencys.consistentDayCount++
+            consistency.push(this.data.startTime)
+            consistencys = consistency
+            if (consistencys.length === 7) {
+              this.setData({
+                sevenDaysConsistency: true,
+                showRewardBox: true
+              })
+            }
+          } else {
+            consistencys = []
+            consistency.push(this.data.startDate)
+            consistencys = consistency
+          }
+        }
+      }
+    }
+    wx.setStorageSync("consistencys", consistencys)
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function() {
+  onPullDownRefresh: function () {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function() {
+  onReachBottom: function () {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function() {
+  onShareAppMessage: function () {
 
   },
 })

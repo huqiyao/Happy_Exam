@@ -19,7 +19,7 @@ var rewards = wx.getStorageSync('rewards') || []
 var totalRightCount = wx.getStorageSync('totalRightCount') || 0
 var consistencys = wx.getStorageSync('consistencys') || []
 var todayAnsweredCount = 0
-var consistentDays
+// var consistentDays
 // var consistentDayCount
 Page({
   /**
@@ -28,6 +28,7 @@ Page({
   data: {
     isExerciseMode: true, //预设当前项的值
     showRewardBox: false,
+    isCollected:false,
     settingItems: [{
       name: 'autoSwitch',
       value: '答对自动切题'
@@ -60,109 +61,125 @@ Page({
    * 收藏题目
    */
   clickCollect: function (e) {
+    var isCollected
     currentLibrary = this.data.currentLibrary
     var that = this
     var collection;
     var subjectIndex = e.currentTarget.dataset.index
     var subjectSelected = this.data.subject[subjectIndex]
-    if (this.data.subject[subjectIndex].isCollected === undefined) {
-      var isCollected = "subject[" + subjectIndex + "].isCollected"
-      console.log("未定义")
-      this.setData({
-        [isCollected]: false
-      })
-    }
-    console.log(currentLibrary)
-    if (currentLibrary.collections === undefined) {
-      collection = []
-    } else {
-      collection = currentLibrary.collections
-    }
-    // 收藏
-    if (this.data.subject[subjectIndex].isCollected === false) {
-      // 在随机库里收藏，错题库里同时呈现
-      if (this.data.libraryItem === "随机练习") {
-        currentLibrary.subjects[subjectIndex].isCollected = true
-        console.log("wrongSubjects" in currentLibrary)
-        // if (lib[libIndex].wrongSubjects!= undefined) //陷入死循环
-        // if (wrongSubjects in lib[libIndex]) { //结果是false
-        // 只有在出现错题时收藏才执行
-        if ("wrongSubjects" in currentLibrary) {
-          for (var i = 0; i < currentLibrary.wrongSubjects.length; i++) {
-            if (currentLibrary.wrongSubjects[i].id === currentLibrary.subjects[subjectIndex].id) {
-              currentLibrary.wrongSubjects[i].isCollected = true
-            }
-          }
-        }
-      }
-      // 在错题库里收藏，随机库里同时呈现
-      if (this.data.libraryItem === "我的错题") {
-        currentLibrary.wrongSubjects[subjectIndex].isCollected = true
-        for (var i = 0; i < currentLibrary.subjects.length; i++) {
-          if (currentLibrary.subjects[i].id === currentLibrary.wrongSubjects[subjectIndex].id) {
-            currentLibrary.subjects[i].isCollected = true
-          }
-        }
-      }
-      var isCollected = "subject[" + subjectIndex + "].isCollected"
-      this.setData({
-        [isCollected]: true
-      })
-      collection.push(subjectSelected)
-      currentLibrary.collections = collection
-      wx.setStorageSync('librarys', globalData.librarys);
+    // collection = currentLibrary.collections === undefined ? [] : currentLibrary.collections
+    // if (subjectSelected.isCollected === undefined){
+    //   subjectSelected.isCollected=true
+    //   collection.push(subjectSelected)
+    //   currentLibrary.collections = collection
+    //   wx.setStorageSync('librarys', globalData.librarys);
+    //   this.setData({
+    //     isCollected: subjectSelected.isCollected
+    //   })
+    // }
 
-    }
-    // 取消收藏
-    else {
-      var collectionDel = []
-      console.log(subjectSelected)
-      for (var i = 0; i < collection.length; i++) {
-        if (collection[i].id != subjectSelected.id) {
-          collectionDel.push(collection[i])
-        }
-      }
-      console.log(collectionDel)
-      // lib[libIndex].collections[subjectIndex].isCollected = false
-      // 在随机库里取消收藏，随机库里同时取消
-      if (this.data.libraryItem === "随机练习") {
-        currentLibrary.subjects[subjectIndex].isCollected = false
-        for (var i = 0; i < currentLibrary.wrongSubjects.length; i++) {
-          if (currentLibrary.wrongSubjects[i].id === currentLibrary.subjects[subjectIndex].id) {
-            currentLibrary.wrongSubjects[i].isCollected = false
-          }
-        }
-      }
-      // 在错题库里取消收藏，随机库里同时取消
-      if (this.data.libraryItem === "我的错题") {
-        currentLibrary.wrongSubjects[subjectIndex].isCollected = false
-        for (var i = 0; i < currentLibrary.subjects.length; i++) {
-          if (currentLibrary.subjects[i].id === currentLibrary.wrongSubjects[subjectIndex].id) {
-            currentLibrary.subjects[i].isCollected = false
-          }
-        }
-      }
-      // 在收藏库里取消收藏，错题库与随机库中都取消
-      if (this.data.libraryItem === "我的收藏") {
-        currentLibrary.collections[subjectIndex].isCollected = false
-        for (var i = 0; i < currentLibrary.subjects.length; i++) {
-          if (currentLibrary.subjects[i].id === currentLibrary.collections[subjectIndex].id) {
-            currentLibrary.subjects[i].isCollected = false
-          }
-        }
-        for (var i = 0; i < currentLibrary.wrongSubjects.length; i++) {
-          if (currentLibrary.wrongSubjects[i].id === currentLibrary.collections[subjectIndex].id) {
-            currentLibrary.wrongSubjects[i].isCollected = false
-          }
-        }
-      }
-      currentLibrary.collections = collectionDel
-      wx.setStorageSync('librarys', globalData.librarys);
-      var isCollected = "subject[" + subjectIndex + "].isCollected"
-      this.setData({
-        [isCollected]: false
-      })
-    }
+    
+  // if(collection == false){
+  //   collection.push(subjectSelected)
+  // }
+    // if (this.data.subject[subjectIndex].isCollected === undefined) {
+    //   var isCollected = "subject[" + subjectIndex + "].isCollected"
+    //   console.log("未定义")
+    //   this.setData({
+    //     [isCollected]: false
+    //   })
+    // }
+    // console.log(currentLibrary)
+    // if (currentLibrary.collections === undefined) {
+    //   collection = []
+    // } else {
+    //   collection = currentLibrary.collections
+    // }
+    // // 收藏
+    // if (this.data.subject[subjectIndex].isCollected === false) {
+    //   // 在随机库里收藏，错题库里同时呈现
+    //   if (this.data.libraryItem === "随机练习") {
+    //     currentLibrary.subjects[subjectIndex].isCollected = true
+    //     console.log("wrongSubjects" in currentLibrary)
+    //     // if (lib[libIndex].wrongSubjects!= undefined) //陷入死循环
+    //     // if (wrongSubjects in lib[libIndex]) { //结果是false
+    //     // 只有在出现错题时收藏才执行
+    //     if ("wrongSubjects" in currentLibrary) {
+    //       for (var i = 0; i < currentLibrary.wrongSubjects.length; i++) {
+    //         if (currentLibrary.wrongSubjects[i].id === currentLibrary.subjects[subjectIndex].id) {
+    //           currentLibrary.wrongSubjects[i].isCollected = true
+    //         }
+    //       }
+    //     }
+    //   }
+    //   // 在错题库里收藏，随机库里同时呈现
+    //   if (this.data.libraryItem === "我的错题") {
+    //     currentLibrary.wrongSubjects[subjectIndex].isCollected = true
+    //     for (var i = 0; i < currentLibrary.subjects.length; i++) {
+    //       if (currentLibrary.subjects[i].id === currentLibrary.wrongSubjects[subjectIndex].id) {
+    //         currentLibrary.subjects[i].isCollected = true
+    //       }
+    //     }
+    //   }
+    //   var isCollected = "subject[" + subjectIndex + "].isCollected"
+    //   this.setData({
+    //     [isCollected]: true
+    //   })
+    //   collection.push(subjectSelected)
+    //   currentLibrary.collections = collection
+    //   wx.setStorageSync('librarys', globalData.librarys);
+
+    // }
+    // // 取消收藏
+    // else {
+    //   var collectionDel = []
+    //   console.log(subjectSelected)
+    //   for (var i = 0; i < collection.length; i++) {
+    //     if (collection[i].id != subjectSelected.id) {
+    //       collectionDel.push(collection[i])
+    //     }
+    //   }
+    //   console.log(collectionDel)
+    //   // lib[libIndex].collections[subjectIndex].isCollected = false
+    //   // 在随机库里取消收藏，随机库里同时取消
+    //   if (this.data.libraryItem === "随机练习") {
+    //     currentLibrary.subjects[subjectIndex].isCollected = false
+    //     for (var i = 0; i < currentLibrary.wrongSubjects.length; i++) {
+    //       if (currentLibrary.wrongSubjects[i].id === currentLibrary.subjects[subjectIndex].id) {
+    //         currentLibrary.wrongSubjects[i].isCollected = false
+    //       }
+    //     }
+    //   }
+    //   // 在错题库里取消收藏，随机库里同时取消
+    //   if (this.data.libraryItem === "我的错题") {
+    //     currentLibrary.wrongSubjects[subjectIndex].isCollected = false
+    //     for (var i = 0; i < currentLibrary.subjects.length; i++) {
+    //       if (currentLibrary.subjects[i].id === currentLibrary.wrongSubjects[subjectIndex].id) {
+    //         currentLibrary.subjects[i].isCollected = false
+    //       }
+    //     }
+    //   }
+    //   // 在收藏库里取消收藏，错题库与随机库中都取消
+    //   if (this.data.libraryItem === "我的收藏") {
+    //     currentLibrary.collections[subjectIndex].isCollected = false
+    //     for (var i = 0; i < currentLibrary.subjects.length; i++) {
+    //       if (currentLibrary.subjects[i].id === currentLibrary.collections[subjectIndex].id) {
+    //         currentLibrary.subjects[i].isCollected = false
+    //       }
+    //     }
+    //     for (var i = 0; i < currentLibrary.wrongSubjects.length; i++) {
+    //       if (currentLibrary.wrongSubjects[i].id === currentLibrary.collections[subjectIndex].id) {
+    //         currentLibrary.wrongSubjects[i].isCollected = false
+    //       }
+    //     }
+    //   }
+    //   currentLibrary.collections = collectionDel
+    //   wx.setStorageSync('librarys', globalData.librarys);
+    //   var isCollected = "subject[" + subjectIndex + "].isCollected"
+    //   this.setData({
+    //     [isCollected]: false
+    //   })
+    // }
     // globalData.collectedSubjectIds = (wx.getStorageSync('librarys') || [])[libIndex].collections
   },
 
@@ -677,8 +694,9 @@ Page({
     log.push(thisRecord)
     wx.setStorageSync('logs', log)
 
+
     // 7天奋战
-    var consistency = consistencys
+    // var consistency = consistencys
     var isConsistent = false
     var todayRecord = (wx.getStorageSync('logs') || []).filter(item => item.startDate === this.data.startDate)
     todayRecord.forEach((item, index) => {
@@ -687,40 +705,53 @@ Page({
     console.log("今天答题题数")
     console.log(todayAnsweredCount)
     if (todayAnsweredCount >= 10) {
+      console.log(consistencys == false)
       if (consistencys == false) {
         // consistencys.consistentDayCount = 1
-        consistency.push(this.data.startTime)
-        consistencys = consistency
+        // consistencys.push(this.data.startTime)
+        // consistencys = consistency
+        var arr = []
+        console.log(new Date())
+        arr.push(new Date())
+        console.log(arr)
+        consistencys.push((new Date()))
       } else {
         // if (util.formatTime(this.data.startTime).split(" ")[0])
         for (var i = 0; i < consistencys.length; i++) {
-          if (util.formatTime(this.data.startTime).split(" ")[0] === util.formatTime(consistencys[i]).split(" ")[0]) {
+          // 将缓存中的字符串时间变成Date格式
+          var lastDate = util.formatTime(new Date((consistencys[i]))) 
+          if (util.formatTime(this.data.startTime).split(" ")[0] === lastDate.split(" ")[0]) {
             break;
           }
         }
         if (i === consistencys.length) {
           var lastExerciseDate = consistencys[consistencys.length - 1]
           // 三种今天与上一次练习时间连续的情况
-          var caseOne = this.getTimeDetail(lastExerciseDate).todayYear === this.getTimeDetail(this.data.startTime).todayYear && this.getTimeDetail(lastExerciseDate).todayMonth === this.getTimeDetail(this.data.startTime).todayMonth && this.getTimeDetail(lastExerciseDate).todayDate === this.getTimeDetail(this.data.startTime).todayDate - 1
-          var caseTwo = this.getTimeDetail(lastExerciseDate).todayYear === this.getTimeDetail(this.data.startTime).todayYear && this.getTimeDetail(lastExerciseDate).todayMonth === this.getTimeDetail(this.data.startTime).todayMonth - 1 && this.getTimeDetail(lastExerciseDate).todayDate === this.getTimeDetail(lastExerciseDate).maxDay && this.getTimeDetail(this.data.startTime).todayDate === 1
-          var caseThree = this.getTimeDetail(lastExerciseDate).todayYear === this.getTimeDetail(this.data.startTime).todayYear - 1 && this.getTimeDetail(lastExerciseDate).todayMonth === 12 && this.getTimeDetail(this.data.startTime).todayMonth === 1 && this.getTimeDetail(lastExerciseDate).todayDate === this.getTimeDetail(lastExerciseDate).maxDay && this.getTimeDetail(this.data.startTime).todayDate === 1
+          var thisTime = this.getTimeDetail(this.data.startTime);
+          var thatTime = this.getTimeDetail(new Date((consistencys[i])))
+          var caseOne = thatTime.todayYear === thisTime.todayYear && thatTime.todayMonth === thisTime.todayMonth && thatTime.todayDate === thisTime.todayDate - 1
+          var caseTwo = thatTime.todayYear === thisTime.todayYear && thatTime.todayMonth === thisTime.todayMonth - 1 && thatTime.todayDate === thatTime.maxDay && thisTime.todayDate === 1
+          var caseThree = thatTime.todayYear === thisTime.todayYear - 1 && thatTime.todayMonth === 12 && thisTime.todayMonth === 1 && thatTime.todayDate === thatTime.maxDay && thisTime.todayDate === 1
           if (caseOne || caseTwo || caseThree) {
             isConsistent = true;
           }
           if (isConsistent) {
             // consistencys.consistentDayCount++
-            consistency.push(this.data.startTime)
-            consistencys = consistency
+            // consistency.push(this.data.startTime)
+            // consistencys = consistency
+            consistencys.push(this.data.startTime)
             if (consistencys.length === 7) {
               this.setData({
                 sevenDaysConsistency: true,
                 showRewardBox: true
               })
+              this.addAchievement("7天奋战","连续7天刷题10道以上，该项成就可无限叠加，达成一次积攒50学霸点")
             }
           } else {
+            // consistencys = []
+            // consistency.push(this.data.startDate)
             consistencys = []
-            consistency.push(this.data.startDate)
-            consistencys = consistency
+            consistencys.push(this.data.startTime)
           }
         }
       }

@@ -72,7 +72,7 @@
   <view class="exercise-bottom">
     <view class="bottom-bar">
       <view class="icon-box" bindtap='clickCollect' data-index='{{father_index}}'>
-        <image src="{{subject[father_index].isCollected?'/images/f_collect.png':'/images/collect.png'}}"></image>
+        <image src="{{isCollected?'/images/f_collect.png':'/images/collect.png'}}"></image>
       </view>
       <view class="icon-box" bindtap='clickDislike'>
         <image src="{{isDislike?'/images/f_dislike.png':'/images/dislike.png'}}"></image>
